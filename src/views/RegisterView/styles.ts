@@ -5,6 +5,9 @@ export const Wrapper = styled.div`
   width: 100vw;
   padding: 6.5rem 0rem;
   background-color: ${props => props.theme.colors.background};
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   grid-template-rows: 1fr 1.5fr 1.3fr 1.6fr;
   row-gap: 4rem;
