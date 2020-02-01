@@ -6,11 +6,13 @@ import { TextInput } from '../../shared/TextInput';
 import { FancyButton } from '../../shared/FancyButton';
 import { SmallText } from '../../shared/SmallText';
 import { LinkText } from '../../shared/LinkText';
+import { CheckboxInput } from '../../shared/CheckboxInput';
 import { FormWrapper, ButtonContainer } from './styles';
 import {
   FormFieldGrid,
   ErrorMessage,
-  SubmitErrorContainer
+  SubmitErrorContainer,
+  CheckboxFieldGrid
 } from '../RegisterForm/styles';
 import { API_URL } from '../../../constants/apiUrl';
 import { TextLoader } from '../../shared/TextLoader';
@@ -132,6 +134,18 @@ export const LoginForm: React.FC = () => {
                   hasError={meta.error && meta.touched}
                 />
               </FormFieldGrid>
+            )}
+          />
+
+          <Field
+            name='stayLoggedIn'
+            render={({ input, meta }) => (
+              <CheckboxFieldGrid>
+                <CheckboxInput {...input} type='checkbox' />
+                <FieldLabel margin={fieldLabelMargins}>
+                  <SmallText>Stay logged in</SmallText>
+                </FieldLabel>
+              </CheckboxFieldGrid>
             )}
           />
 

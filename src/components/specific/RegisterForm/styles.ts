@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const FormWrapper = styled.form`
   display: grid;
-  grid-template-rows: repeat(3, 1fr) 0.1fr 1.3fr;
+  grid-template-rows: repeat(3, 1fr) 0.1fr 0.1fr 1.3fr;
   grid-template-columns: 28rem;
   row-gap: 1.3rem;
   justify-content: center;
@@ -31,12 +31,11 @@ export const ButtonContainer = styled.div`
   width: 100%;
   grid-template-rows: 1fr 1fr;
   row-gap: 1rem;
-  grid-area: 5 / 1 / 6 / 2;
+  grid-area: 6 / 1 / 7 / 2;
 `;
 
 export const CheckboxFieldGrid = styled.div`
   margin-left: 1rem;
   display: grid;
   grid-template-columns: 0.09fr 3fr;
-  column-gap: 0.7rem;
 `;
