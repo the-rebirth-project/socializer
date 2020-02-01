@@ -1,11 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
+import { FORM_ERROR } from 'final-form';
+import axios from 'axios';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
-import { FormWrapper, FormFieldGrid, ErrorMessage } from './styles';
+import { CheckboxInput } from '../../shared/CheckboxInput';
+import { FancyButton } from '../../shared/FancyButton';
+import { SmallText } from '../../shared/SmallText';
+import { LinkText } from '../../shared/LinkText';
+import { API_URL } from '../../../constants/apiUrl';
+import {
+  FormWrapper,
+  FormFieldGrid,
+  ErrorMessage,
+  ButtonContainer,
+  SubmitErrorContainer,
+  CheckboxFieldGrid
+} from './styles';
+import { TextLoader } from '../../shared/TextLoader';
 
 export const RegisterForm: React.FC = () => {
-  const onSubmit = () => {};
+  const [signingUp, setSigningUp] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  type FormValues = {
+    username: string;
+    email: string;
+    password: string;
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    setSigningUp(true);
+    // reset error
+    setSubmitError('');
+    try {
+      await axios.post(`${API_URL}/signup`, {
+        userHandle: values.username,
+        email: values.email,
+        password: values.password
+      });
+      setSigningUp(false);
+      // do redirects here
+    } catch (err) {
+      /**
+       * - POSSIBLE ERRORS
+       * auth/email-already-in-use
+       * auth/invalid-email
+       * auth/operation-not-allowed
+       * auth/weak-password
+       * auth/username-already-taken
+       */
+
+      if (err.response.status >= 400) {
+        switch (err.response.data.error.code) {
+          case 'auth/email-already-in-use':
+            setSubmitError('Email is already in use');
+            break;
+          case 'auth/username-already-taken':
+            setSubmitError('Username is taken');
+            break;
+          case 'auth/invalid-email':
+            setSubmitError('Email entered is invalid');
+            break;
+          case 'auth/operation-not-allowed':
+            setSubmitError(
+              'We goofed up on our end. Please wait until we fix things.'
+            );
+            break;
+          case 'auth/weak-password':
+            setSubmitError('Password is weak');
+            break;
+          case 'server/unavailable':
+            setSubmitError('Server is currently unavailable');
+            break;
+          default:
+            setSubmitError('An unexpected error has occured');
+            break;
+        }
+        setSigningUp(false);
+        return { [FORM_ERROR]: submitError };
+      }
+    }
+  };
 
   // these are in rem units
   const fieldLabelMargins = {
@@ -116,6 +192,36 @@ export const RegisterForm: React.FC = () => {
               </FormFieldGrid>
             )}
           />
+
+          <Field
+            name='acceptedTerms'
+            render={({ input, meta }) => (
+              <CheckboxFieldGrid>
+                <CheckboxInput {...input} type='checkbox' />
+                <FieldLabel margin={fieldLabelMargins}>
+                  <SmallText>
+                    Accept <LinkText to=''>Terms and Conditions</LinkText>
+                  </SmallText>
+                </FieldLabel>
+              </CheckboxFieldGrid>
+            )}
+          />
+
+          <SubmitErrorContainer>
+            <ErrorMessage>{submitError}</ErrorMessage>
+          </SubmitErrorContainer>
+
+          <ButtonContainer>
+            <FancyButton onClick={handleSubmit}>
+              {!signingUp && 'Sign Up'}{' '}
+              <TextLoader loading={signingUp}>Authenticating...</TextLoader>
+            </FancyButton>
+
+            <SmallText>
+              Already have an account? Click{' '}
+              <LinkText to='/login'>here</LinkText> to sign in
+            </SmallText>
+          </ButtonContainer>
         </FormWrapper>
       )}
     />
