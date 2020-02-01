@@ -11,9 +11,6 @@
 # production
 /build
 
-# api
-/src/constants/apiUrl.ts
-
 # misc
 .DS_Store
 .env.local
