@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import firebase from 'firebase';
+import { navigate } from '@reach/router';
+import { AuthError } from '../../../helpers/AuthError';
 import { Form, Field } from 'react-final-form';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
@@ -14,7 +16,6 @@ import {
   SubmitErrorContainer,
   CheckboxFieldGrid
 } from '../RegisterForm/styles';
-import { API_URL } from '../../../constants/apiUrl';
 import { TextLoader } from '../../shared/TextLoader';
 
 // TODO: Refactor LoginForm and RegisterForm into a single generic form component
@@ -28,14 +29,26 @@ export const LoginForm: React.FC = () => {
   const [signingIn, setSigningIn] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  const signInUser = async (values: Values) => {
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(values.email, values.password);
+    } catch (err) {
+      console.log(err);
+      throw new AuthError(err.code, 'Authentication failed');
+    }
+  };
+
   const onSubmit = async (values: Values) => {
     setSigningIn(true);
     setSubmitError('');
     try {
-      await axios.post(`${API_URL}/signin`, values);
+      await signInUser(values);
       setSigningIn(false);
       setSubmitError('');
       // do redirects here
+      navigate('/home');
     } catch (err) {
       /**
        * - POSSIBLE ERRORS:
@@ -46,28 +59,27 @@ export const LoginForm: React.FC = () => {
        * server/unavailable
        */
 
-      if (err.response.status >= 400) {
-        switch (err.response.data.error.code) {
-          case 'auth/invalid-email':
-            setSubmitError('Invalid email');
-            break;
-          case 'auth/user-disabled':
-            setSubmitError('Account is disabled');
-            break;
-          case 'auth/wrong-password':
-            setSubmitError('Invalid password');
-            break;
-          case 'auth/user-not-found':
-            setSubmitError('User not found');
-            break;
-          case 'server/unavailable':
-            setSubmitError('Server is currently unavailable');
-            break;
-          default:
-            setSubmitError('An unexpected error has occured');
-            break;
-        }
+      switch (err.code) {
+        case 'auth/invalid-email':
+          setSubmitError('Invalid email');
+          break;
+        case 'auth/user-disabled':
+          setSubmitError('Account is disabled');
+          break;
+        case 'auth/wrong-password':
+          setSubmitError('Invalid password');
+          break;
+        case 'auth/user-not-found':
+          setSubmitError('User not found');
+          break;
+        case 'server/unavailable':
+          setSubmitError('Server is currently unavailable');
+          break;
+        default:
+          setSubmitError('An unexpected error has occured');
+          break;
       }
+
       setSigningIn(false);
     }
   };
