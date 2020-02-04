@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { navigate } from '@reach/router';
+import firebase from 'firebase';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import axios from 'axios';
+import { AuthError } from '../../../helpers/AuthError';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
 import { CheckboxInput } from '../../shared/CheckboxInput';
@@ -19,14 +22,33 @@ import {
 } from './styles';
 import { TextLoader } from '../../shared/TextLoader';
 
+type FormValues = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 export const RegisterForm: React.FC = () => {
   const [signingUp, setSigningUp] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  type FormValues = {
-    username: string;
-    email: string;
-    password: string;
+  const signUpUser = async (userCredentials: FormValues) => {
+    try {
+      const credentials = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(
+          userCredentials.email,
+          userCredentials.password
+        );
+
+      await axios.post(`${API_URL}/user/add-user`, {
+        userId: credentials.user?.uid,
+        email: credentials.user?.email,
+        userHandle: userCredentials.username
+      });
+    } catch (err) {
+      throw new AuthError(err.code, 'Authentication failed');
+    }
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -34,13 +56,10 @@ export const RegisterForm: React.FC = () => {
     // reset error
     setSubmitError('');
     try {
-      await axios.post(`${API_URL}/signup`, {
-        userHandle: values.username,
-        email: values.email,
-        password: values.password
-      });
+      await signUpUser(values);
       setSigningUp(false);
-      // do redirects here
+      // Redirect to feed
+      navigate('/home');
     } catch (err) {
       /**
        * - POSSIBLE ERRORS
@@ -51,35 +70,33 @@ export const RegisterForm: React.FC = () => {
        * auth/username-already-taken
        */
 
-      if (err.response.status >= 400) {
-        switch (err.response.data.error.code) {
-          case 'auth/email-already-in-use':
-            setSubmitError('Email is already in use');
-            break;
-          case 'auth/username-already-taken':
-            setSubmitError('Username is taken');
-            break;
-          case 'auth/invalid-email':
-            setSubmitError('Email entered is invalid');
-            break;
-          case 'auth/operation-not-allowed':
-            setSubmitError(
-              'We goofed up on our end. Please wait until we fix things.'
-            );
-            break;
-          case 'auth/weak-password':
-            setSubmitError('Password is weak');
-            break;
-          case 'server/unavailable':
-            setSubmitError('Server is currently unavailable');
-            break;
-          default:
-            setSubmitError('An unexpected error has occured');
-            break;
-        }
-        setSigningUp(false);
-        return { [FORM_ERROR]: submitError };
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          setSubmitError('Email is already in use');
+          break;
+        case 'auth/username-already-taken':
+          setSubmitError('Username is taken');
+          break;
+        case 'auth/invalid-email':
+          setSubmitError('Email entered is invalid');
+          break;
+        case 'auth/operation-not-allowed':
+          setSubmitError(
+            'We goofed up on our end. Please wait until we fix things.'
+          );
+          break;
+        case 'auth/weak-password':
+          setSubmitError('Password is weak');
+          break;
+        case 'server/unavailable':
+          setSubmitError('Server is currently unavailable');
+          break;
+        default:
+          setSubmitError('An unexpected error has occured');
+          break;
       }
+      setSigningUp(false);
+      return { [FORM_ERROR]: submitError };
     }
   };
 
