@@ -3,7 +3,7 @@ import axios from 'axios';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { createGlobalStyle } from 'styled-components';
-import { useUserDispatch } from './contexts/UserContext';
+import { useUserDispatch } from './contexts/CurrentUserContext';
 import { API_URL } from './constants/apiUrl';
 import { Routes } from './Routes';
 

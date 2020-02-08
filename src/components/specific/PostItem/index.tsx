@@ -8,7 +8,7 @@ import { BoldText } from '../../shared/BoldText';
 import { Text } from '../../shared/Text';
 import { Comments } from '../Comments';
 import { CircleAvatar } from '../../shared/CircleAvatar';
-import { useUserState } from '../../../contexts/UserContext';
+import { useUserState } from '../../../contexts/CurrentUserContext';
 import {
   Wrapper,
   PostHeader,
