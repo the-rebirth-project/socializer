@@ -1,2 +1,1 @@
-export const API_URL =
-  'https://us-central1-socializer-e77ce.cloudfunctions.net/api';
+export const API_URL = process.env.REACT_APP_CLOUD_API_KEY;
