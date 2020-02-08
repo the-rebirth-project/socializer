@@ -16,4 +16,4 @@ export const Navbar: React.FC = () => {
   );
 };
 
-export const NavbarBottomMargin = 7; // in rem
+export const NavbarBottomMargin = 8; // in rem

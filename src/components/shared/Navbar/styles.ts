@@ -6,7 +6,7 @@ export const Wrapper = styled.nav`
   left: 0;
   z-index: 2;
   width: 100vw;
-  height: 4rem;
+  height: 5rem;
   background-image: linear-gradient(
     to right,
     ${props => props.theme.colors.primary},
