@@ -1,36 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { PostsProvider } from '../../contexts/PostsContext';
+import { Navbar, NavbarBottomMargin } from '../../components/shared/Navbar';
+import { SizedBox } from '../../components/shared/SizedBox';
+import firebase from 'firebase/app';
 import 'firebase/auth';
-import { RouteComponentProps } from '@reach/router';
-import { API_URL } from '../../constants/apiUrl';
+import { RouteComponentProps, navigate } from '@reach/router';
+import { Posts } from '../../components/specific/Posts';
 import { GlobalStyles } from './styles';
 
 export const HomeView: React.FC<RouteComponentProps> = () => {
-  const [allPosts, setAllPosts] = useState<
-    {
-      userHandle: string;
-      body: string;
-      createdAt: string;
-    }[]
-  >();
-
-  const getPosts = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/posts`);
-      setAllPosts(response.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    getPosts();
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        navigate('/login');
+      }
+    });
   }, []);
 
   return (
     <div>
       <GlobalStyles />
-      {allPosts?.map(p => p.body)}
+      <header style={{ marginBottom: `${NavbarBottomMargin}rem` }}>
+        <Navbar />
+      </header>
+      <PostsProvider>
+        <Posts />
+      </PostsProvider>
+      <SizedBox height={5} />
     </div>
   );
 };
