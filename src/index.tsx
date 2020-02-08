@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import firebase from 'firebase/app';
-import 'firebase/auth';
+import { UserContextProvider } from './contexts/UserContext';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './themes/mainTheme';
@@ -22,7 +22,9 @@ firebase.initializeApp(FBConfig);
 
 ReactDOM.render(
   <ThemeProvider theme={mainTheme}>
-    <App />
+    <UserContextProvider>
+      <App />
+    </UserContextProvider>
   </ThemeProvider>,
   document.getElementById('root')
 );
