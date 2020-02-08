@@ -1,7 +1,15 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.main`
+export const Wrapper = styled.div`
+  width: 100vw;
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+`;
+
+export const GridContainer = styled.main`
   display: grid;
-  grid-auto-rows: 1fr;
-  grid-template-columns: 30rem;
+  grid-auto-rows: min-content;
+  row-gap: 4rem;
+  grid-template-columns: 32rem;
 `;
