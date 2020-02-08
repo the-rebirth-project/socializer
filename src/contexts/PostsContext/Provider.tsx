@@ -1,8 +1,8 @@
 import React from 'react';
+import { postsReducer } from './reducers';
 import {
   PostsStateContext,
   PostsDispatchContext,
-  postsReducer,
   initialState
 } from './context';
 
