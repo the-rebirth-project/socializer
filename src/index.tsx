@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import firebase from 'firebase/app';
-import { UserContextProvider } from './contexts/CurrentUserContext';
+import { UserContextProvider } from './contexts/UserContext';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './themes/mainTheme';
