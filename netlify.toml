@@ -12,7 +12,7 @@
   # Default build command.
   command = "npm run build"
 
-  environment = {REACT_APP_API_KEY="AIzaSyCN6y89ruVX7xESbDjp6UXwBJ7f5Z7sEi8",REACT_APP_AUTH_DOMAIN="socializer-e77ce.firebaseapp.com",REACT_APP_DATABASE_URL="https://socializer-e77ce.firebaseio.com",REACT_APP_PROJECT_ID="socializer-e77ce",REACT_APP_STORAGE_BUCKET="socializer-e77ce.appspot.com",REACT_APP_MESSAGING_SENDER_ID="155031946649",REACT_APP_APP_ID="1:155031946649:web:8c9494f2a17cc80bdfff08",REACT_APP_MEASUREMENT_ID="G-QL72HQ5GHC",REACT_APP_CLOUD_API_URL="https://us-central1-socializer-e77ce.cloudfunctions.net/api"}
+  environment = {REACT_APP_API_KEY="AIzaSyCN6y89ruVX7xESbDjp6UXwBJ7f5Z7sEi8",REACT_APP_AUTH_DOMAIN="socializer-e77ce.firebaseapp.com",REACT_APP_DATABASE_URL="https://socializer-e77ce.firebaseio.com",REACT_APP_PROJECT_ID="socializer-e77ce",REACT_APP_STORAGE_BUCKET="socializer-e77ce.appspot.com",REACT_APP_MESSAGING_SENDER_ID="155031946649",REACT_APP_APP_ID="1:155031946649:web:8c9494f2a17cc80bdfff08",REACT_APP_MEASUREMENT_ID="G-QL72HQ5GHC"}
   
   
 
