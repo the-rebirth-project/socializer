@@ -1,10 +1,6 @@
 import React, { useReducer } from 'react';
-import {
-  UserStateContext,
-  UserDispatchContext,
-  userReducer,
-  initialState
-} from './context';
+import { userReducer } from './reducers';
+import { UserStateContext, UserDispatchContext, initialState } from './context';
 
 export const UserContextProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);

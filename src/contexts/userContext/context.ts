@@ -1,15 +1,22 @@
 import React from 'react';
+import { Action } from './actions';
+import { Post } from '../../types';
 
-type Action = {
-  type: 'SET_TOKEN';
-  payload: { token: string };
-};
+// current user state
 
 type Dispatch = (action: Action) => void;
-type State = { token: string };
+export type State = {
+  userHandle: string;
+  userPosts: Post[];
+};
+
+/**
+ * We access the current user's id token by using onAuthStateChanged
+ */
 
 export const initialState: State = {
-  token: ''
+  userHandle: '',
+  userPosts: []
 };
 
 export const UserStateContext = React.createContext<State | undefined>(
@@ -19,26 +26,16 @@ export const UserDispatchContext = React.createContext<Dispatch | undefined>(
   undefined
 );
 
-export const userReducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'SET_TOKEN':
-      return {
-        ...state,
-        token: action.payload.token
-      };
-    default:
-      throw new Error(`Unhandled action type ${action.type}`);
-  }
-};
-
 export const useUserState = () => {
   const context = React.useContext(UserStateContext);
   if (context === undefined)
     throw new Error('Context must be used within a UserProvider');
+  return context;
 };
 
 export const useUserDispatch = () => {
   const context = React.useContext(UserDispatchContext);
   if (context === undefined)
     throw new Error('Context must be used within a UserProvider');
+  return context;
 };
