@@ -1,26 +1,14 @@
 import React from 'react';
-import { PostsAction } from '../../types/actions';
+import { Action } from './actions';
 import { Post } from '../../types';
 
-type Dispatch = (action: PostsAction) => void;
-type State = {
+type Dispatch = (action: Action) => void;
+export type State = {
   posts: Post[];
 };
 
 export const initialState = {
   posts: []
-};
-
-export const postsReducer = (state: State, action: PostsAction) => {
-  switch (action.type) {
-    case 'SET_POSTS':
-      return {
-        ...state,
-        posts: action.payload
-      };
-    default:
-      throw new Error(`Unhandled action of type ${action.type}`);
-  }
 };
 
 export const PostsStateContext = React.createContext<State | undefined>(
@@ -30,20 +18,16 @@ export const PostsDispatchContext = React.createContext<Dispatch | undefined>(
   undefined
 );
 
-// verifies if context is subscribed to inside of a provider
-const verifyContext = (context: State | Dispatch | undefined) => {
+export const usePostsState: () => State = () => {
+  const context = React.useContext(PostsStateContext);
   if (context === undefined)
     throw new Error('Context must be used within a PostsProvider');
-};
-
-export const usePostsState = () => {
-  const context = React.useContext(PostsStateContext);
-  verifyContext(context);
   return context;
 };
 
 export const usePostsDispatch = () => {
   const context = React.useContext(PostsDispatchContext);
-  verifyContext(context);
+  if (context === undefined)
+    throw new Error('Context must be used within a PostsProvider');
   return context;
 };
