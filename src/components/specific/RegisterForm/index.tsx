@@ -117,6 +117,8 @@ export const RegisterForm: React.FC = () => {
     /\s/g.test(value) || !value.includes('@') ? 'Invalid email' : undefined;
   const minChar = (min: number) => (value: string) =>
     value.length >= min ? undefined : `Must be more than ${min - 1} characters`;
+  const maxChar = (max: number) => (value: string) =>
+    value.length <= max ? undefined : `Must be less than ${max - 1} characters`;
   const composeValidators = (...validators: any[]) => (value: any) =>
     validators.reduce(
       (error, validator) => error || validator(value),
@@ -130,7 +132,12 @@ export const RegisterForm: React.FC = () => {
         <FormWrapper onSubmit={handleSubmit}>
           <Field
             name='username'
-            validate={composeValidators(required, noWhitespace, minChar(4))}
+            validate={composeValidators(
+              required,
+              noWhitespace,
+              minChar(4),
+              maxChar(20)
+            )}
             render={({ input, meta }) => (
               <FormFieldGrid>
                 <FieldLabel
