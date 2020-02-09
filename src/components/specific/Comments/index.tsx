@@ -1,5 +1,6 @@
 import React from 'react';
 import uuid from 'uuid/v4';
+import moment from 'moment';
 import { Text } from '../../shared/Text';
 import { OpacityLoader } from '../../shared/OpacityLoader';
 import { Post } from '../../../types/Post';
@@ -28,17 +29,26 @@ export const Comments: React.FC<CommentsProps> = ({ post }) => {
                   {comment.userHandle}
                 </Text>
               </OpacityLoader>
-              <OpacityLoader loading={post.postingComment} defaultOpacity={0.9}>
+              <OpacityLoader loading={post.postingComment} defaultOpacity={1}>
                 <Text size={textSize}>{comment.body}</Text>
               </OpacityLoader>
+              <Text size={1.2} opacity={0.7}>
+                {moment(comment.createdAt)
+                  .local()
+                  .fromNow()}
+              </Text>
             </>
           ) : (
             <>
               <Text size={textSize} weight={700}>
                 {comment.userHandle}
               </Text>
-              <Text size={textSize} opacity={0.9}>
-                {comment.body}
+
+              <Text size={textSize}>{comment.body}</Text>
+              <Text size={1.2} opacity={0.7}>
+                {moment(comment.createdAt)
+                  .local()
+                  .fromNow()}
               </Text>
             </>
           )}

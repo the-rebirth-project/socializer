@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { BoldText } from '../../shared/BoldText';
@@ -210,7 +211,11 @@ export const PostItem: React.FC<PostItemProps> = ({ post }) => {
           </UsernameContainer>
 
           <Text size={1.2} opacity={0.8}>
-            posted 1m ago | {post.likes.length} seed
+            posted{' '}
+            {moment(post.createdAt)
+              .local()
+              .fromNow()}{' '}
+            | {post.likes.length} seed
             {post.likes.length > 1 ? 's' : ''}
           </Text>
         </PostMetadata>
