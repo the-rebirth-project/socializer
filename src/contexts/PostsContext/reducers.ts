@@ -50,7 +50,8 @@ export const postsReducer = (state: State, action: Action) => {
             const comments = post.comments;
             comments.push({
               userHandle: action.payload.userHandle,
-              body: action.payload.commentBody
+              body: action.payload.commentBody,
+              createdAt: new Date().toISOString()
             });
             return post;
           }
