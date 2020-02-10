@@ -14,19 +14,11 @@ export const Comment = styled.div`
 `;
 
 export const PostHeader = styled.header`
-  background-image: linear-gradient(
-    to right,
-    ${props => props.theme.colors.primary},
-    ${props => props.theme.colors.secondary}
-  );
-  padding: 1rem 0rem;
   width: 100%;
-  height: 6rem;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
+  height: 100%;
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 1fr 4fr 1fr;
   align-items: center;
 `;
 
