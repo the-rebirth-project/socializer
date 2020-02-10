@@ -5,7 +5,9 @@ export type Action =
   | LikePost
   | UnlikePost
   | AddComment
-  | SetPostingComment;
+  | SetPostingComment
+  | AddPost
+  | SetAddingPost;
 
 type SetPosts = {
   type: 'SET_POSTS';
@@ -45,4 +47,18 @@ type SetPostingComment = {
     postId: string;
     value: boolean;
   };
+};
+
+// sets loading state for post being added to db
+type SetAddingPost = {
+  type: 'SET_ADDING_POST';
+  payload: {
+    postId: string;
+    value: boolean;
+  };
+};
+
+type AddPost = {
+  type: 'ADD_POST';
+  payload: Post;
 };
