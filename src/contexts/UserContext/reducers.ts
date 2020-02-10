@@ -7,7 +7,8 @@ export const userReducer = (state: State, action: Action) => {
       return {
         ...state,
         userHandle: action.payload.userHandle,
-        userPosts: action.payload.posts
+        userPosts: action.payload.posts,
+        userProfile: action.payload.userProfile
       };
     default:
       throw new Error('Unhandled action type');

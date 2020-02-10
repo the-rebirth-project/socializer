@@ -7,6 +7,7 @@ import { Post } from '../../types';
 type Dispatch = (action: Action) => void;
 export type State = {
   userHandle: string;
+  userProfile: string;
   userPosts: Post[];
 };
 
@@ -16,6 +17,7 @@ export type State = {
 
 export const initialState: State = {
   userHandle: '',
+  userProfile: '',
   userPosts: []
 };
 

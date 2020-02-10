@@ -6,6 +6,7 @@ type SetUser = {
   type: 'SET_USER';
   payload: {
     userHandle: string;
+    userProfile: string;
     posts: Post[];
   };
 };
