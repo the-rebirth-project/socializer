@@ -1,9 +1,21 @@
 import React from 'react';
 import { Wrapper } from './styles';
 
-export const FancyButton: React.FC<React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->> = props => {
-  return <Wrapper>{props.children}</Wrapper>;
+type FancyButtonProps = {
+  onClick?: () => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+};
+
+export const FancyButton: React.FC<FancyButtonProps> = ({
+  children,
+  onClick,
+  type,
+  disabled
+}) => {
+  return (
+    <Wrapper onClick={onClick} disabled={disabled} type={type}>
+      {children}
+    </Wrapper>
+  );
 };

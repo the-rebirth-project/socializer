@@ -1,6 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Wrapper = styled.button`
+type WrapperProps = {
+  disabled?: boolean;
+};
+
+export const Wrapper = styled.button<WrapperProps>`
   outline: none;
   border: none;
   text-transform: uppercase;
@@ -19,9 +23,23 @@ export const Wrapper = styled.button`
   );
   font-family: inherit;
   transition: all 0.2s ease-in-out;
+
+  ${props => (props.disabled ? disabledStyles : activeStyles)}
+`;
+
+const disabledStyles = css`
+  cursor: not-allowed;
+
+  :hover,
+  active {
+    transform: none;
+  }
+`;
+
+const activeStyles = css`
   cursor: pointer;
   box-shadow: 0px 3px 6px ${props => props.theme.colors.primary}40;
-
+  opacity: 1;
   :hover {
     transform: translateY(-1px);
   }
