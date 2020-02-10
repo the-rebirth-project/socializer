@@ -7,8 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { BoldText } from '../../shared/BoldText';
 import { Text } from '../../shared/Text';
+import { OpacityLoader } from '../../shared/OpacityLoader';
 import { Comments } from '../Comments';
 import { CircleAvatar } from '../../shared/CircleAvatar';
+import { GradientBox } from '../../shared/GradientBox';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   Wrapper,
@@ -28,7 +30,6 @@ import { Post } from '../../../types';
 import { API_URL } from '../../../constants/apiUrl';
 import { navigate } from '@reach/router';
 import { usePostsDispatch } from '../../../contexts/PostsContext';
-import { OpacityLoader } from '../../shared/OpacityLoader';
 
 // TODO: Move svg defs to another file
 
@@ -200,49 +201,54 @@ export const PostItem: React.FC<PostItemProps> = ({ post }) => {
           </linearGradient>
         </defs>
       </svg>
-      <PostHeader>
-        <ProfilePictureContainer>
-          <CircleAvatar imgUrl={post.userProfile} />
-        </ProfilePictureContainer>
+      <OpacityLoader loading={post.addingPost} defaultOpacity={1}>
+        <GradientBox>
+          <PostHeader>
+            <ProfilePictureContainer>
+              <CircleAvatar imgUrl={post.userProfile} />
+            </ProfilePictureContainer>
 
-        <PostMetadata>
-          <UsernameContainer>
-            <BoldText size={1.6}>{post.userHandle}</BoldText>
-          </UsernameContainer>
+            <PostMetadata>
+              <UsernameContainer>
+                <BoldText size={1.6}>{post.userHandle}</BoldText>
+              </UsernameContainer>
 
-          <Text size={1.2} opacity={0.8}>
-            posted{' '}
-            {moment(post.createdAt)
-              .local()
-              .fromNow()}{' '}
-            | {post.likes.length} seed
-            {post.likes.length > 1 ? 's' : ''}
-          </Text>
-        </PostMetadata>
-        <SvgWrapper likedPost={isLiked} onClick={likePost}>
-          <FontAwesomeIcon icon={faSeedling} />
-        </SvgWrapper>
-      </PostHeader>
-      <PostBody>
-        <ParagraphText>{post.body}</ParagraphText>
-        {post.comments.length > 0 && <Comments post={post} />}
+              <Text size={1.2} opacity={0.8}>
+                posted{' '}
+                {moment(post.createdAt)
+                  .local()
+                  .fromNow()}{' '}
+                | {post.likes.length} seed
+                {post.likes.length > 1 || post.likes.length === 0 ? 's' : ''}
+              </Text>
+            </PostMetadata>
+            <SvgWrapper likedPost={isLiked} onClick={likePost}>
+              <FontAwesomeIcon icon={faSeedling} />
+            </SvgWrapper>
+          </PostHeader>
+        </GradientBox>
 
-        <OpacityLoader loading={post.postingComment} defaultOpacity={1}>
-          <CommentInputFieldContainer>
-            <CommentTextInput
-              type='text'
-              placeholder='Add a comment'
-              value={commentInput}
-              onChange={onCommentInputChange}
-              onKeyPress={onInputEnter}
-              disabled={post.postingComment}
-            />
-            <SendBtnWrapper onClick={onCommentSubmit}>
-              <SendBtn icon={faPaperPlane} />
-            </SendBtnWrapper>
-          </CommentInputFieldContainer>
-        </OpacityLoader>
-      </PostBody>
+        <PostBody>
+          <ParagraphText>{post.body}</ParagraphText>
+          {post.comments.length > 0 && <Comments post={post} />}
+
+          <OpacityLoader loading={post.postingComment} defaultOpacity={1}>
+            <CommentInputFieldContainer>
+              <CommentTextInput
+                type='text'
+                placeholder='Add a comment'
+                value={commentInput}
+                onChange={onCommentInputChange}
+                onKeyPress={onInputEnter}
+                disabled={post.postingComment}
+              />
+              <SendBtnWrapper onClick={onCommentSubmit}>
+                <SendBtn icon={faPaperPlane} />
+              </SendBtnWrapper>
+            </CommentInputFieldContainer>
+          </OpacityLoader>
+        </PostBody>
+      </OpacityLoader>
     </Wrapper>
   );
 };
