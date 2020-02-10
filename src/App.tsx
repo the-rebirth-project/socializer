@@ -11,6 +11,7 @@ const GlobalStyle = createGlobalStyle`
   *, *::after, *::before {
     box-sizing: inherit;
     margin: 0;
+    -webkit-tap-highlight-color: inherit;
   }
 
   html, body {
@@ -18,6 +19,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Montserrat', sans-serif;
     box-sizing: border-box;
     margin: 0;
+    -webkit-tap-highlight-color: transparent;
   }
 `;
 
@@ -38,6 +40,7 @@ const App: React.FC = () => {
           type: 'SET_USER',
           payload: {
             userHandle: res.data.userHandle,
+            userProfile: res.data.profileImageUrl,
             posts: res.data.posts
           }
         });
