@@ -8,6 +8,30 @@ export const postsReducer = (state: State, action: Action) => {
         ...state,
         posts: action.payload
       };
+
+    case 'ADD_POST':
+      const posts = state.posts;
+      posts.unshift(action.payload);
+
+      return {
+        ...state,
+        posts: posts
+      };
+
+    case 'SET_ADDING_POST':
+      return {
+        ...state,
+        posts: state.posts.map(p => {
+          if (p.postId === action.payload.postId) {
+            return {
+              ...p,
+              addingPost: action.payload.value
+            };
+          }
+          return p;
+        })
+      };
+
     case 'LIKE_POST':
       return {
         ...state,
@@ -26,6 +50,7 @@ export const postsReducer = (state: State, action: Action) => {
           }
         })
       };
+
     case 'UNLIKE_POST':
       return {
         ...state,
@@ -42,6 +67,7 @@ export const postsReducer = (state: State, action: Action) => {
           }
         })
       };
+
     case 'ADD_COMMENT':
       return {
         ...state,
@@ -58,6 +84,7 @@ export const postsReducer = (state: State, action: Action) => {
           return post;
         })
       };
+
     case 'SET_POSTING_COMMENT':
       return {
         ...state,
@@ -71,6 +98,7 @@ export const postsReducer = (state: State, action: Action) => {
           return post;
         })
       };
+
     default:
       throw new Error(`Unhandled action`);
   }
