@@ -11,7 +11,7 @@ type CommentsProps = {
 };
 
 export const Comments: React.FC<CommentsProps> = ({ post }) => {
-  const textSize = 1.4; // in rem units
+  const textSize = 1.35; // in rem units
 
   return (
     <Wrapper>

@@ -41,6 +41,12 @@ export const PostAdd: React.FC = () => {
     setPostBody(e.target.value);
   };
 
+  // const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === 'Enter') {
+  //     setPostBody(`${postBody}\n`);
+  //   }
+  // };
+
   const onPostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isPostBeingAdded) {
@@ -103,6 +109,12 @@ export const PostAdd: React.FC = () => {
     }
   };
 
+  const onTextPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const clipboardText = e.clipboardData.getData('text/plain');
+    const postText = clipboardText + postBody;
+    postText.length <= 3000 && setPostBody(postText);
+  };
+
   return (
     <Wrapper>
       <GradientBox>
@@ -121,9 +133,12 @@ export const PostAdd: React.FC = () => {
           <StyledTextArea
             id='addpost'
             placeholder='Add a post'
+            rows={30}
+            cols={100}
             maxRows={10}
-            maxLength={1000}
+            maxLength={3000}
             value={postBody}
+            onPaste={onTextPaste}
             onChange={onTextAreaChanged}
             required
           />

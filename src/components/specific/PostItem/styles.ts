@@ -52,10 +52,11 @@ export const PostBody = styled.main`
 `;
 
 export const ParagraphText = styled.p`
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   font-weight: 400;
   color: ${props => props.theme.colors.textColor};
   line-height: 2rem;
+  white-space: pre-wrap;
 `;
 
 export const CommentTextInput = styled.input`
