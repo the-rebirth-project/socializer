@@ -11,4 +11,6 @@ export type Post = {
   likes: Like[];
   // used for disabling inputs and notifying the user when the comment gets added to the db
   postingComment?: boolean;
+  // similar to the above
+  addingPost?: boolean;
 };
