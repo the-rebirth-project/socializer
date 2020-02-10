@@ -38,7 +38,7 @@ export const StyledTextArea = styled(TextareaAutosize)`
   background-color: transparent;
   padding: 0rem;
   font-family: inherit;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   color: ${props => props.theme.colors.textColor};
   resize: none;
   padding-right: 0.5rem;
