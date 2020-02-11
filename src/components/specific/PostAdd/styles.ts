@@ -49,8 +49,10 @@ export const StyledTextArea = styled(TextareaAutosize)`
     outline: rgba(255, 255, 255, 0);
   }
 
+  // TODO: Display scrollbar for desktop screens
   ::-webkit-scrollbar {
     width: 0.5rem;
+    display: none; /* FOR MOBILE ONLY */
   }
 
   ::-webkit-scrollbar-track {
