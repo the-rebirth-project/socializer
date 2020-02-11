@@ -7,7 +7,7 @@ export const Wrapper = styled.section`
   width: 100%;
 `;
 
-export const CommentContainer = styled.p`
+export const CommentContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
