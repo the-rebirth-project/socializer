@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
-import { PostsProvider } from '../../contexts/PostsContext';
-import { Navbar, NavbarBottomMargin } from '../../components/shared/Navbar';
-import { SizedBox } from '../../components/shared/SizedBox';
-import { PostAdd } from '../../components/specific/PostAdd';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { RouteComponentProps, navigate } from '@reach/router';
+import { PostsProvider } from '../../contexts/PostsContext';
+import { Navbar, NavbarBottomMargin } from '../../components/shared/Navbar';
+import { SizedBox } from '../../components/shared/SizedBox';
 import { Posts } from '../../components/specific/Posts';
-import { GlobalStyles, GridContainer, ContentWrapper } from './styles';
+import { GlobalStyles, ContentWrapper, GridContainer } from './styles';
 
 export const HomeView: React.FC<RouteComponentProps> = () => {
   useEffect(() => {
@@ -27,7 +26,6 @@ export const HomeView: React.FC<RouteComponentProps> = () => {
       <PostsProvider>
         <ContentWrapper>
           <GridContainer>
-            <PostAdd />
             <Posts />
           </GridContainer>
         </ContentWrapper>
