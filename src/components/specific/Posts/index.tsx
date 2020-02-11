@@ -1,11 +1,13 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { PostItem } from '../PostItem';
+import { PostAdd } from '../PostAdd';
+import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { API_URL } from '../../../constants/apiUrl';
 import {
   usePostsState,
   usePostsDispatch
 } from '../../../contexts/PostsContext';
-import { PostItem } from '../PostItem';
 import { Post } from '../../../types/Post';
 import { Wrapper } from './styles';
 
@@ -15,12 +17,12 @@ import { Wrapper } from './styles';
 export const Posts: React.FC = () => {
   const state = usePostsState();
   const dispatch = usePostsDispatch();
+  const [loading, setLoading] = useState(false);
 
   const getPosts = async () => {
     try {
       const response = await axios.get(`${API_URL}/posts`);
       const postsData: Post[] = response.data;
-      console.log(postsData);
       dispatch({ type: 'SET_POSTS', payload: postsData });
     } catch (err) {
       console.error(err);
@@ -29,14 +31,22 @@ export const Posts: React.FC = () => {
   const memoizedGetPosts = useCallback(getPosts, []);
 
   useEffect(() => {
-    memoizedGetPosts();
+    const asyncFetch = async () => {
+      setLoading(true);
+      await memoizedGetPosts();
+      setLoading(false);
+    };
+    asyncFetch();
   }, [memoizedGetPosts]);
 
   return (
-    <Wrapper>
-      {state.posts.map(p => (
-        <PostItem post={p} key={p.postId} />
-      ))}
-    </Wrapper>
+    <LoadingSpinner loading={loading} alignCenter>
+      <Wrapper>
+        <PostAdd />
+        {state.posts.map(p => (
+          <PostItem post={p} key={p.postId} />
+        ))}
+      </Wrapper>
+    </LoadingSpinner>
   );
 };
