@@ -66,22 +66,26 @@ export const PostItem: React.FC<PostItemProps> = ({ post }) => {
       commentInputRef.current && commentInputRef.current.focus();
   }, [isReplying, post.postId, textInputState.postId]);
 
+  const switchCommentMode = () => {
+    textInputDispatch({
+      type: 'SET_COMMENT_MODE',
+      payload: CommentMode.POST_COMMENT
+    });
+  };
+
   const onCommentInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentInput(e.target.value);
+    if (
+      e.target.value === '' &&
+      textInputState.commentMode === CommentMode.REPLY_COMMENT
+    )
+      switchCommentMode();
   };
 
   const onInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       onCommentSubmit();
     }
-  };
-
-  const onCommentOutOfFocus = () => {
-    if (textInputState.commentMode === CommentMode.REPLY_COMMENT)
-      textInputDispatch({
-        type: 'SET_COMMENT_MODE',
-        payload: CommentMode.POST_COMMENT
-      });
   };
 
   const onCommentSubmit = () => {
@@ -358,9 +362,9 @@ export const PostItem: React.FC<PostItemProps> = ({ post }) => {
                 type='text'
                 placeholder={isReplying ? 'Reply to comment' : 'Add a comment'}
                 value={commentInput}
+                onClick={switchCommentMode}
                 onChange={onCommentInputChange}
                 onKeyPress={onInputEnter}
-                onBlur={onCommentOutOfFocus}
                 disabled={post.postingComment}
                 ref={commentInputRef}
               />

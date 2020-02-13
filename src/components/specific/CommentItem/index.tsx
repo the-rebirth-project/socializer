@@ -73,20 +73,21 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const renderReplyElement = (reply: Reply, loading: boolean) => (
     <Wrapper key={uuid()}>
-      <>
-        <OpacityLoader loading={loading ? 1 : 0} defaultOpacity={1}>
-          <Text size={textSize} weight={700}>
-            {reply.userHandle}{' '}
-          </Text>
-          <Text size={textSize}>{reply.body}</Text>
-        </OpacityLoader>
-
-        <Text size={1.2} opacity={0.7}>
-          {moment(reply.createdAt)
-            .local()
-            .fromNow()}
+      <OpacityLoader loading={loading ? 1 : 0} defaultOpacity={1}>
+        <Text size={textSize} weight={700}>
+          {reply.userHandle}{' '}
         </Text>
-      </>
+      </OpacityLoader>
+
+      <OpacityLoader loading={loading ? 1 : 0} defaultOpacity={1}>
+        <Text size={textSize}>{reply.body}</Text>
+      </OpacityLoader>
+
+      <Text size={1.2} opacity={0.7}>
+        {moment(reply.createdAt)
+          .local()
+          .fromNow()}
+      </Text>
     </Wrapper>
   );
 
@@ -102,7 +103,12 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         <Text size={textSize} weight={700}>
           {comment.userHandle}{' '}
         </Text>
+      </OpacityLoader>
 
+      <OpacityLoader
+        loading={isLastComment && postingComment ? 1 : 0}
+        defaultOpacity={1}
+      >
         <Text size={textSize}>{comment.body}</Text>
       </OpacityLoader>
 
