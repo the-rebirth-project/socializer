@@ -24,5 +24,5 @@ export const GridContainer = styled.div`
   display: grid;
   grid-auto-rows: min-content;
   row-gap: 4rem;
-  grid-template-columns: 32rem;
+  grid-template-columns: 34rem;
 `;
