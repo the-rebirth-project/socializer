@@ -1,4 +1,8 @@
+import { Dispatch } from 'react';
+import axios from 'axios';
+import { API_URL } from '../../constants/apiUrl';
 import { Post } from '../../types/Post';
+import { Reply } from '../../types/Reply';
 
 export type Action =
   | SetPosts
@@ -7,7 +11,13 @@ export type Action =
   | AddComment
   | SetPostingComment
   | AddPost
-  | SetAddingPost;
+  | SetAddingPost
+  | SetFetchingPosts
+  | SetShowReplies
+  | ResetLocalReplies
+  | SetReplies
+  | AddReply
+  | SetPostingReply;
 
 type SetPosts = {
   type: 'SET_POSTS';
@@ -35,8 +45,33 @@ type AddComment = {
   type: 'ADD_COMMENT';
   payload: {
     postId: string;
+    commentId: string;
     userHandle: string;
     commentBody: string;
+  };
+};
+
+type SetFetchingPosts = {
+  type: 'SET_FETCHING_POSTS';
+  payload: boolean;
+};
+
+// determines whether or not to show replies on a CommentItem. we can use this to then determine if we should add a reply to the "localReplies" to display it if user didn't click on view replies and added a reply. we reset the localReplies whenever user clicks on View Replies again
+type SetShowReplies = {
+  type: 'SET_SHOW_REPLIES';
+  payload: {
+    postId: string;
+    commentId: string;
+    value: boolean;
+  };
+};
+
+// resets all of the local replies whenever user clicks on view replies again
+type ResetLocalReplies = {
+  type: 'RESET_LOCAL_REPLIES';
+  payload: {
+    postId: string;
+    commentId: string;
   };
 };
 
@@ -45,6 +80,15 @@ type SetPostingComment = {
   type: 'SET_POSTING_COMMENT';
   payload: {
     postId: string;
+    value: boolean;
+  };
+};
+
+type SetPostingReply = {
+  type: 'SET_POSTING_REPLY';
+  payload: {
+    postId: string;
+    commentId: string;
     value: boolean;
   };
 };
@@ -61,4 +105,64 @@ type SetAddingPost = {
 type AddPost = {
   type: 'ADD_POST';
   payload: Post;
+};
+
+type SetReplies = {
+  type: 'SET_REPLIES';
+  payload: {
+    postId: string;
+    commentId: string;
+    replies: Reply[];
+  };
+};
+
+type AddReply = {
+  type: 'ADD_REPLY';
+  payload: {
+    replyId: string;
+    postId: string;
+    commentId: string;
+    body: string;
+    userHandle: string;
+  };
+};
+
+// ASYNC ACTIONS
+
+export const getPosts = async (dispatch: Dispatch<Action>) => {
+  try {
+    dispatch({ type: 'SET_FETCHING_POSTS', payload: true });
+    const response = await axios.get(`${API_URL}/posts`);
+    const postsData: Post[] = response.data;
+    dispatch({ type: 'SET_POSTS', payload: postsData });
+  } catch (err) {
+    // TODO: handle error
+    console.log(err);
+  }
+  dispatch({ type: 'SET_FETCHING_POSTS', payload: false });
+};
+
+export const getReplies = async (
+  dispatch: Dispatch<Action>,
+  postId: string,
+  commentId: string
+) => {
+  try {
+    const res = await axios.get(
+      `${API_URL}/posts/comments/replies/${postId}/${commentId}`
+    );
+    const replies: Reply[] = res.data;
+
+    dispatch({
+      type: 'SET_REPLIES',
+      payload: {
+        postId,
+        commentId,
+        replies
+      }
+    });
+  } catch (err) {
+    // TODO: Handle error
+    console.log(err);
+  }
 };
