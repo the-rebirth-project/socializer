@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
-import axios from 'axios';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import { createGlobalStyle } from 'styled-components';
-import { useUserDispatch } from './contexts/UserContext';
-import { API_URL } from './constants/apiUrl';
+import { useUserDispatch, setUser } from './contexts/UserContext';
 import { Routes } from './Routes';
 
 const GlobalStyle = createGlobalStyle`
@@ -27,25 +23,7 @@ const App: React.FC = () => {
   const dispatch = useUserDispatch();
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(async user => {
-      if (user) {
-        const idToken = await user.getIdToken();
-        const res = await axios.get(`${API_URL}/user`, {
-          headers: {
-            Authorization: `Bearer ${idToken}`
-          }
-        });
-        console.log(res.data);
-        dispatch({
-          type: 'SET_USER',
-          payload: {
-            userHandle: res.data.userHandle,
-            userProfile: res.data.profileImageUrl,
-            posts: res.data.posts
-          }
-        });
-      }
-    });
+    setUser(dispatch);
   }, [dispatch]);
 
   return (
