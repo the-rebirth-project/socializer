@@ -7,11 +7,27 @@ export const Wrapper = styled.section`
   width: 100%;
 `;
 
-export const CommentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  word-break: break-word;
+export const CommentsContainer = styled.main`
   width: 100%;
-  line-height: 2rem;
+  overflow-y: auto;
+  display: block;
+  display: grid;
+  grid-auto-rows: min-content;
+  row-gap: 1.3rem;
+  max-height: 30rem;
+  padding-right: 1rem;
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 2rem;
+    background-color: ${props => props.theme.colors.textColor};
+  }
 `;
