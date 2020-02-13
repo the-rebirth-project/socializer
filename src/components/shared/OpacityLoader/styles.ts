@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type WrapperProps = {
-  loading: boolean | undefined;
+  loading: number;
   defaultOpacity: number;
   loadingOpacity?: number;
 };

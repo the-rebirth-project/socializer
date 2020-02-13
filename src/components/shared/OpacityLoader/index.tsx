@@ -2,7 +2,7 @@ import React from 'react';
 import { Wrapper } from './styles';
 
 type OpacityLoaderProps = {
-  loading: boolean | undefined;
+  loading: number; // 1 for true and 0 for false
   defaultOpacity: number; // the opacity to use once loading is done i.e element's default state
   loadingOpacity?: number; // opacity to show once loading is done
 };
