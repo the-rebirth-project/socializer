@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
 import { PostItem } from '../PostItem';
 import { PostAdd } from '../PostAdd';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
-import { API_URL } from '../../../constants/apiUrl';
+import { useUserState } from '../../../contexts/UserContext';
+import { TextInputProvider } from '../../../contexts/TextInputContext';
 import {
   usePostsState,
-  usePostsDispatch
+  usePostsDispatch,
+  getPosts
 } from '../../../contexts/PostsContext';
-import { Post } from '../../../types/Post';
 import { Wrapper } from './styles';
 
 // A posts component which will render an individual PostItem comprising of the post body, comments, replies, etc
@@ -17,35 +17,26 @@ import { Wrapper } from './styles';
 export const Posts: React.FC = () => {
   const state = usePostsState();
   const dispatch = usePostsDispatch();
-  const [loading, setLoading] = useState(false);
-
-  const getPosts = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/posts`);
-      const postsData: Post[] = response.data;
-      dispatch({ type: 'SET_POSTS', payload: postsData });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  const memoizedGetPosts = useCallback(getPosts, []);
+  const userState = useUserState();
+  const shouldLoad = state.fetchingPosts || userState.fetchingUser;
 
   useEffect(() => {
-    const asyncFetch = async () => {
-      setLoading(true);
-      await memoizedGetPosts();
-      setLoading(false);
-    };
-    asyncFetch();
-  }, [memoizedGetPosts]);
+    getPosts(dispatch);
+  }, [dispatch]);
 
   return (
-    <LoadingSpinner loading={loading} alignCenter>
+    <LoadingSpinner
+      // load the spinner as long as we don't have a valid userHandle set
+      loading={shouldLoad ? 1 : 0}
+      centerSpinner
+    >
       <Wrapper>
         <PostAdd />
-        {state.posts.map(p => (
-          <PostItem post={p} key={p.postId} />
-        ))}
+        <TextInputProvider>
+          {state.posts.map(post => (
+            <PostItem post={post} key={post.postId} />
+          ))}
+        </TextInputProvider>
       </Wrapper>
     </LoadingSpinner>
   );
