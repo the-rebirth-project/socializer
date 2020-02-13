@@ -9,6 +9,7 @@ export type State = {
   userHandle: string;
   userProfile: string;
   userPosts: Post[];
+  fetchingUser: boolean;
 };
 
 /**
@@ -18,7 +19,8 @@ export type State = {
 export const initialState: State = {
   userHandle: '',
   userProfile: '',
-  userPosts: []
+  userPosts: [],
+  fetchingUser: false
 };
 
 export const UserStateContext = React.createContext<State | undefined>(
