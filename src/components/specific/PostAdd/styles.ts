@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import TextareaAutosize from 'react-textarea-autosize';
 
 export const Wrapper = styled.section`
-  width: 32rem;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-rows: min-content 1fr;
