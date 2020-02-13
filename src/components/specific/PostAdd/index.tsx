@@ -59,9 +59,12 @@ export const PostAdd: React.FC = () => {
       setPostBody('');
 
       const postId = uuid();
+
       const newPost: Post = {
         body: postInput,
         comments: [],
+        addingPost: false,
+        postingComment: false,
         likes: [],
         createdAt: new Date().toISOString(),
         postId,
@@ -84,6 +87,7 @@ export const PostAdd: React.FC = () => {
             await axios.post(
               `${API_URL}/posts`,
               {
+                postId,
                 body: postInput
               },
               {
@@ -142,7 +146,7 @@ export const PostAdd: React.FC = () => {
             onChange={onTextAreaChanged}
             required
           />
-          <OpacityLoader loading={isPostBeingAdded} defaultOpacity={1}>
+          <OpacityLoader loading={isPostBeingAdded ? 1 : 0} defaultOpacity={1}>
             <PostButtonContainer>
               <FancyButton type='submit'>Post</FancyButton>
             </PostButtonContainer>
