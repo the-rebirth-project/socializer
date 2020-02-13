@@ -6,26 +6,23 @@ const Spin = keyframes`
   }
 `;
 
-// alignCenter positions elem in the middle of the page
-type WrapperProps = {
-  alignCenter?: boolean;
-};
-
-export const Wrapper = styled.div<WrapperProps>`
+export const Wrapper = styled.div`
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
-
-  ${props =>
-    props.alignCenter
-      ? css`
-          top: 50%;
-          transform: translate(-50%, -50%);
-        `
-      : ''}
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
-export const Spinner = styled.div`
+type SpinnerProps = {
+  small?: boolean;
+};
+
+const SmallSpinnerStyles = css`
+  border-width: 0.5rem;
+  padding: 0.5rem;
+`;
+
+export const Spinner = styled.div<SpinnerProps>`
   border-radius: 50%;
   border: 1rem solid ${props => props.theme.colors.textColor};
   padding: 1rem;
@@ -33,4 +30,6 @@ export const Spinner = styled.div`
   border-left-color: transparent;
   display: inline-block;
   animation: 1.5s ${Spin} ease-in-out infinite;
+
+  ${props => props.small && SmallSpinnerStyles}
 `;
