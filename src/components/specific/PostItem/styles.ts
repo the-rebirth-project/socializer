@@ -60,7 +60,7 @@ export const ParagraphText = styled.p`
 `;
 
 export const CommentTextInput = styled.input`
-  color: ${props => props.theme.colors.cardBackground};
+  color: inherit;
   font-size: inherit;
   /* White color */
   background: transparent;
@@ -91,6 +91,7 @@ export const SendBtn = styled(FontAwesomeIcon)`
 
 export const CommentInputFieldContainer = styled.div`
   background-color: ${props => props.theme.colors.textColor};
+  color: ${props => props.theme.colors.cardBackground};
   padding: 1.3rem 1rem;
   display: grid;
   grid-template-columns: 7fr 1fr;
@@ -112,6 +113,24 @@ export const CommentInputFieldContainer = styled.div`
     right: 1rem;
     fill: url(#sendBtnGrad);
     filter: url(#dropShadowGraphic);
+  }
+`;
+
+export const CommentInputLabel = styled.label`
+  font-size: 1rem;
+  color: ${props => props.theme.colors.textColor};
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.3s ease-in-out;
+
+  ${CommentTextInput}:focus ~ & {
+    opacity: 1;
+    top: -1.5rem;
+    transform: translateY(0%);
   }
 `;
 
