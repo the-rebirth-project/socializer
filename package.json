@@ -10,16 +10,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
-    "@types/axios": "^0.14.0",
-    "@types/jest": "^24.9.1",
-    "@types/jwt-decode": "^2.2.1",
-    "@types/node": "^12.12.25",
-    "@types/reach__router": "^1.2.6",
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
-    "@types/react-textarea-autosize": "^4.3.5",
-    "@types/styled-components": "^4.4.2",
-    "@types/uuid": "^3.4.7",
     "axios": "^0.19.2",
     "final-form": "^4.18.7",
     "firebase": "^7.8.0",
@@ -55,5 +45,16 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^24.9.1",
+    "@types/jwt-decode": "^2.2.1",
+    "@types/node": "^12.12.25",
+    "@types/reach__router": "^1.2.6",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-textarea-autosize": "^4.3.5",
+    "@types/styled-components": "^4.4.2",
+    "@types/uuid": "^3.4.7"
+  }
 }
