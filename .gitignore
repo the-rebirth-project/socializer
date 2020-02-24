@@ -8,6 +8,9 @@
 #env
 .env
 
+#dev
+/src/config/dev.ts
+
 # testing
 /coverage
 
