@@ -1,5 +1,5 @@
 import React from 'react';
-import { Action } from './actions';
+import { Action } from './actionTypes';
 import { CommentMode } from '../../types';
 
 type Dispatch = (action: Action) => void;

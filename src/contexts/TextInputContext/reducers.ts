@@ -1,5 +1,5 @@
 import { State } from './context';
-import { Action } from './actions';
+import { Action } from './actionTypes';
 
 export const textInputReducer = (state: State, action: Action) => {
   switch (action.type) {
