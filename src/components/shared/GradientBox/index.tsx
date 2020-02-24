@@ -1,6 +1,13 @@
 import React from 'react';
 import { Wrapper } from './styles';
 
-export const GradientBox: React.FC = ({ children }) => {
-  return <Wrapper>{children}</Wrapper>
+type GradientBoxProps = {
+  sizeScaling?: number; // scale factor
+};
+
+export const GradientBox: React.FC<GradientBoxProps> = ({
+  children,
+  sizeScaling
+}) => {
+  return <Wrapper sizeScaling={sizeScaling}>{children}</Wrapper>;
 };
