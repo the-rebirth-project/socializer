@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { scrollbarStyles } from '../../../constants/scrollbarStyles';
 
 export const Wrapper = styled.section`
   display: grid;
@@ -17,17 +18,5 @@ export const CommentsContainer = styled.main`
   max-height: 30rem;
   padding-right: 1rem;
 
-  ::-webkit-scrollbar {
-    width: 0.5rem;
-  }
-
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 2rem;
-    background-color: ${props => props.theme.colors.textColor};
-  }
+  ${scrollbarStyles};
 `;
