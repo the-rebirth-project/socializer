@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { navigate } from '@reach/router';
-import axios from 'axios';
-import firebase from 'firebase/app';
 import uuid from 'uuid/v4';
-import 'firebase/auth';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   usePostsDispatch,
@@ -14,7 +12,6 @@ import { CircleAvatar } from '../../shared/CircleAvatar';
 import { FancyButton } from '../../shared/FancyButton';
 import { OpacityLoader } from '../../shared/OpacityLoader';
 import { Text } from '../../shared/Text';
-import { Post } from '../../../types';
 import {
   Wrapper,
   UserHeader,
@@ -23,17 +20,14 @@ import {
   StyledTextArea,
   PostButtonContainer
 } from './styles';
-import { API_URL } from '../../../constants/apiUrl';
 
 export const PostAdd: React.FC = () => {
+  const db = firebase.firestore();
   const userState = useUserState();
   const postsDispatch = usePostsDispatch();
   const postsState = usePostsState();
   const [postBody, setPostBody] = useState('');
-  /* 
-    checks to see if any posts are being added
-    keep in mind that all newly added posts are added to the start of the posts arr
-  */
+
   const isPostBeingAdded =
     postsState.posts[0] && postsState.posts[0].addingPost;
 
@@ -41,82 +35,61 @@ export const PostAdd: React.FC = () => {
     setPostBody(e.target.value);
   };
 
-  // const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-  //   if (e.key === 'Enter') {
-  //     setPostBody(`${postBody}\n`);
-  //   }
-  // };
-
   const onPostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isPostBeingAdded) {
-      /* 
-        Fields like createdAt and postId are "temporary" and are only added to obey the type definitions of Post
-        Once we add the new post to the firebase db, we'll be fetching that post with the firebase provided postId and createdAt
-      */
       // pass value of postBody to another variable as we'll reset the input state on submit
       const postInput = postBody;
       setPostBody('');
-
+      const { userHandle, userProfile } = userState;
       const postId = uuid();
 
-      const newPost: Post = {
+      const newPost = {
         body: postInput,
-        comments: [],
-        addingPost: false,
-        postingComment: false,
-        likes: [],
-        createdAt: new Date().toISOString(),
-        postId,
-        userHandle: userState.userHandle,
-        userProfile: userState.userProfile
+        userHandle,
+        userProfile,
+        createdAt: new Date().toISOString()
       };
-      postsDispatch({ type: 'ADD_POST', payload: newPost });
 
       try {
-        firebase.auth().onAuthStateChanged(async user => {
-          if (user) {
-            postsDispatch({
-              type: 'SET_ADDING_POST',
-              payload: {
-                postId,
-                value: true
-              }
-            });
-            const idToken = await user.getIdToken();
-            await axios.post(
-              `${API_URL}/posts`,
-              {
-                postId,
-                body: postInput
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${idToken}`
-                }
-              }
-            );
-            postsDispatch({
-              type: 'SET_ADDING_POST',
-              payload: {
-                postId,
-                value: false
-              }
-            });
-          } else {
-            navigate('/login');
+        postsDispatch({
+          type: 'SET_ADDING_POST',
+          payload: {
+            postId,
+            value: true
+          }
+        });
+
+        await db
+          .collection('posts')
+          .doc(postId)
+          .set(newPost);
+
+        postsDispatch({
+          type: 'ADD_POST',
+          payload: {
+            ...newPost,
+            postId,
+            comments: [],
+            replies: [],
+            likes: [],
+            addingPost: false,
+            postingComment: false
           }
         });
       } catch (err) {
+        // TODO: Handle error
         console.log(err);
       }
-    }
-  };
 
-  const onTextPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const clipboardText = e.clipboardData.getData('text/plain');
-    const postText = clipboardText + postBody;
-    postText.length <= 3000 && setPostBody(postText);
+      postsDispatch({
+        type: 'SET_ADDING_POST',
+        payload: {
+          postId,
+          value: false
+        }
+      });
+    }
   };
 
   return (
@@ -142,7 +115,6 @@ export const PostAdd: React.FC = () => {
             maxRows={10}
             maxLength={3000}
             value={postBody}
-            onPaste={onTextPaste}
             onChange={onTextAreaChanged}
             required
           />
