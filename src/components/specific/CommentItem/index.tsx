@@ -3,37 +3,45 @@ import moment from 'moment';
 import uuid from 'uuid/v4';
 import { usePostsDispatch, getReplies } from '../../../contexts/PostsContext';
 import { useTextInputDispatch } from '../../../contexts/TextInputContext';
+import { useCommentsState } from '../../../contexts/CommentsContext';
+import { ReplyForm } from '../ReplyForm';
 import { Text } from '../../shared/Text';
 import { OpacityLoader } from '../../shared/OpacityLoader';
-import { Comment, CommentMode, Post, Reply } from '../../../types';
+import { Comment, CommentMode, Reply } from '../../../types';
 import {
   Wrapper,
   RepliesContainer,
+  RepliesWrapper,
   ClickableSpan,
   StyledLoadingSpinner
 } from './styles';
 
 type CommentItemProps = {
-  post: Post;
+  postId: string;
+  numComments: number;
   comment: Comment;
   index: number;
 };
 
 export const CommentItem: React.FC<CommentItemProps> = ({
-  post,
+  postId,
   comment,
+  numComments,
   index
 }) => {
   const textSize = 1.35;
-
-  const { postId, postingComment } = post;
-  const numComments = post.comments.length;
-  const { postingReply, fetchedReplies, showReplies, localReplies } = comment;
+  // postingComment?
 
   const postsDispatch = usePostsDispatch();
+  const { postingComment } = useCommentsState();
   const textInputDispatch = useTextInputDispatch();
+  //! FIX
+  const postingReply = false; // TODO: REPLACE WITH REPLIES CONTEXT STATE
+  //! FIX
 
   const [fetchingReplies, setFetchingReplies] = useState(false);
+  const [fetchedReplies, setFetchedReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   // only apply the opacity loader to the last comment item
   const isLastComment = index === numComments - 1 ? true : false;
 
@@ -45,25 +53,19 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         payload: { postId, commentId: comment.id }
       });
 
-      postsDispatch({
-        type: 'SET_SHOW_REPLIES',
-        payload: {
-          postId: post.postId,
-          commentId: comment.id,
-          value: !comment.showReplies
-        }
-      });
+      setShowReplies(!showReplies);
       // only fetch if we know for a fact that there are replies in the collection
       if (!fetchedReplies) {
         setFetchingReplies(true);
         await getReplies(postsDispatch, postId, comment.id);
+        setFetchedReplies(true);
         setFetchingReplies(false);
       }
     }
   };
 
   const onReplyClick = () => {
-    textInputDispatch({ type: 'SET_POST_ID', payload: post.postId });
+    textInputDispatch({ type: 'SET_POST_ID', payload: postId });
     textInputDispatch({ type: 'SET_COMMENT_ID', payload: comment.id });
     textInputDispatch({
       type: 'SET_COMMENT_MODE',
@@ -128,29 +130,35 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         </ClickableSpan>
       </Text>
 
-      <RepliesContainer>
+      <ReplyForm />
+
+      {/* <RepliesContainer>
         {showReplies && (
           <StyledLoadingSpinner loading={fetchingReplies ? 1 : 0} small>
-            {comment.replies.map((reply, idx) => (
-              <>
-                {renderReplyElement(
-                  reply,
-                  comment.replies.length - 1 === idx && postingReply
-                )}
-              </>
-            ))}
+            <RepliesWrapper>
+              {comment.replies.map((reply, idx) => (
+                <>
+                  {renderReplyElement(
+                    reply,
+                    comment.replies.length - 1 === idx && postingReply
+                  )}
+                </>
+              ))}
+            </RepliesWrapper>
           </StyledLoadingSpinner>
         )}
 
-        {localReplies.map((reply, idx) => (
-          <>
-            {renderReplyElement(
-              reply,
-              comment.replies.length - 1 === idx && postingReply
-            )}
-          </>
-        ))}
-      </RepliesContainer>
+        <RepliesWrapper>
+          {localReplies.map((reply, idx) => (
+            <>
+              {renderReplyElement(
+                reply,
+                comment.replies.length - 1 === idx && postingReply
+              )}
+            </>
+          ))}
+        </RepliesWrapper>
+      </RepliesContainer> */}
     </Wrapper>
   );
 };
