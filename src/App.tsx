@@ -16,6 +16,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     margin: 0;
     -webkit-tap-highlight-color: transparent;
+    background-color: ${props => props.theme.colors.background};
   }
 `;
 
