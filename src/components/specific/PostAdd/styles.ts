@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import TextareaAutosize from 'react-textarea-autosize';
+import { scrollbarStyles } from '../../../constants/scrollbarStyles';
 
 export const Wrapper = styled.section`
   width: 100%;
@@ -42,27 +43,17 @@ export const StyledTextArea = styled(TextareaAutosize)`
   color: ${props => props.theme.colors.textColor};
   resize: none;
   padding-right: 0.5rem;
-  line-height: 1.45;
+  line-height: 1.35;
   margin-bottom: 2rem;
 
   :focus {
     outline: rgba(255, 255, 255, 0);
   }
 
-  // TODO: Display scrollbar for desktop screens
+  ${scrollbarStyles};
+
   ::-webkit-scrollbar {
-    width: 0.5rem;
     display: none; /* FOR MOBILE ONLY */
-  }
-
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 2rem;
-    background-color: ${props => props.theme.colors.textColor};
   }
 `;
 
