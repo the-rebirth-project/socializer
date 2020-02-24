@@ -12,7 +12,8 @@ export const ButtonContainer = styled.div`
   display: grid;
   height: 100%;
   width: 100%;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: repeat(3, min-content);
   row-gap: 1rem;
   grid-area: 5 / 1 / 6 / 2;
+  text-align: center;
 `;
