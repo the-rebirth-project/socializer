@@ -151,6 +151,7 @@ export const LoginForm: React.FC = () => {
 
           <Field
             name='stayLoggedIn'
+            type='checkbox'
             render={({ input, meta }) => (
               <CheckboxFieldGrid>
                 <CheckboxInput {...input} type='checkbox' />
@@ -166,7 +167,7 @@ export const LoginForm: React.FC = () => {
           </SubmitErrorContainer>
 
           <ButtonContainer>
-            <FancyButton>
+            <FancyButton onClick={handleSubmit}>
               {!signingIn && 'Sign In'}{' '}
               <TextLoader loading={signingIn}>Authenticating...</TextLoader>
             </FancyButton>
