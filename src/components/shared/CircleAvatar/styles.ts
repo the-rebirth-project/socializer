@@ -1,9 +1,15 @@
 import styled from 'styled-components';
+import Img from 'react-image';
 
-export const Wrapper = styled.img`
+type WrapperProps = {
+  sizeScaling?: number;
+};
+
+const size = 4.15;
+export const Wrapper = styled(Img)<WrapperProps>`
   display: block;
-  height: 4.15rem;
-  width: 4.15rem;
+  height: ${props => (props.sizeScaling ? props.sizeScaling * size : size)}rem;
+  width: ${props => (props.sizeScaling ? props.sizeScaling * size : size)}rem;
   border-radius: 50%;
   object-fit: cover;
 `;
