@@ -5,11 +5,13 @@ import { Wrapper, SendBtn } from './styles';
 type SendButtonProps = {
   onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   iconSize?: number;
+  disabled?: boolean;
 };
 
 export const SendButton: React.FC<SendButtonProps> = ({
   onClick,
-  iconSize
+  iconSize,
+  disabled
 }) => {
   return (
     <Wrapper onClick={onClick}>
@@ -29,7 +31,7 @@ export const SendButton: React.FC<SendButtonProps> = ({
         </defs>
       </svg>
 
-      <SendBtn icon={faPaperPlane} iconSize={iconSize}></SendBtn>
+      <SendBtn icon={faPaperPlane} iconSize={iconSize} disabled={disabled}></SendBtn>
     </Wrapper>
   );
 };
