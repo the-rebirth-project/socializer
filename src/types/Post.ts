@@ -1,4 +1,3 @@
-import { Like } from './Like';
 import { Comment } from './Comment';
 
 export type Post = {
@@ -7,10 +6,9 @@ export type Post = {
   userHandle: string;
   createdAt: string;
   userProfile: string;
+  // initially fetched comments
   comments: Comment[];
-  likes: Like[];
-  // used for disabling inputs and notifying the user when the comment gets added to the db
-  postingComment: boolean;
-  // similar to the above
-  addingPost: boolean;
+  numComments: number;
+  numSeeds: number;
+  isSeeded: boolean;
 };
