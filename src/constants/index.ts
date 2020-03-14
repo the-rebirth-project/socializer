@@ -1,2 +1,2 @@
-export * from './apiUrl';
 export * from './scrollbarStyles';
+export * from './regularTextSize';
