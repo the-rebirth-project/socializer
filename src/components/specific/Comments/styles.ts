@@ -20,3 +20,5 @@ export const CommentsContainer = styled.main`
 
   ${scrollbarStyles};
 `;
+
+export const NumCommentsContainer = styled.div``;
