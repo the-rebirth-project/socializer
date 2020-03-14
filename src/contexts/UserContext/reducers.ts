@@ -1,5 +1,5 @@
 import { State } from './context';
-import { Action } from './actions';
+import { Action } from './actionTypes';
 
 export const userReducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -7,7 +7,6 @@ export const userReducer = (state: State, action: Action) => {
       return {
         ...state,
         userHandle: action.payload.userHandle,
-        userPosts: action.payload.posts,
         userProfile: action.payload.userProfile
       };
 
