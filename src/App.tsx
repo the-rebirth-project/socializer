@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
+import { navigate } from '@reach/router';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 import { createGlobalStyle } from 'styled-components';
-import { useUserDispatch, setUser } from './contexts/UserContext';
+import { useUserDispatch } from './contexts/UserContext';
 import { Routes } from './Routes';
 
 const GlobalStyle = createGlobalStyle`
@@ -24,7 +28,35 @@ const App: React.FC = () => {
   const dispatch = useUserDispatch();
 
   useEffect(() => {
-    setUser(dispatch);
+    // SET USER
+    firebase.auth().onAuthStateChanged(async user => {
+      if (user) {
+        try {
+          dispatch({ type: 'SET_FETCHING_USER', payload: true });
+          const snap = await firebase
+            .firestore()
+            .collection('users')
+            .where('userId', '==', user.uid)
+            .limit(1)
+            .get();
+          const userDocData = snap.docs[0].data();
+
+          dispatch({
+            type: 'SET_USER',
+            payload: {
+              userHandle: userDocData.userHandle,
+              userProfile: userDocData.profileImageURL
+            }
+          });
+          dispatch({ type: 'SET_FETCHING_USER', payload: false });
+        } catch (err) {
+          // TODO: Handle error
+          console.log(err);
+        }
+      } else {
+        navigate('/login');
+      }
+    });
   }, [dispatch]);
 
   return (
