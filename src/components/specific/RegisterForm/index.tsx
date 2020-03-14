@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { navigate } from '@reach/router';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
-import axios from 'axios';
-import { AuthError } from '../../../helpers/AuthError';
+import { AuthError } from '../../../utils/AuthError';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
 import { CheckboxInput } from '../../shared/CheckboxInput';
 import { FancyButton } from '../../shared/FancyButton';
-import { SmallText } from '../../shared/SmallText';
+import { Text } from '../../shared/Text';
 import { LinkText } from '../../shared/LinkText';
-import { API_URL } from '../../../constants/apiUrl';
+import { TextLoader } from '../../shared/TextLoader';
 import {
-  FormWrapper,
   FormFieldGrid,
   ErrorMessage,
-  ButtonContainer,
-  SubmitErrorContainer,
+  MetaTextContainer,
   CheckboxFieldGrid
-} from './styles';
-import { TextLoader } from '../../shared/TextLoader';
+} from '../../shared/FormStyles';
+import { FormWrapper, ButtonContainer } from './styles';
 
 type FormValues = {
   username: string;
@@ -29,23 +27,57 @@ type FormValues = {
 };
 
 export const RegisterForm: React.FC = () => {
+  const db = firebase.firestore();
+  const fbConfig = require('../../../config');
+
   const [signingUp, setSigningUp] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [verifEmailSent, setVerifEmailSent] = useState(false);
 
-  const signUpUser = async (userCredentials: FormValues) => {
+  const signUpUser = async (formValues: FormValues) => {
     try {
-      const credentials = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(
-          userCredentials.email,
-          userCredentials.password
+      const defaultPhotoUrl = `https://firebasestorage.googleapis.com/v0/b/${fbConfig.storageBucket}/o/no-img.png?alt=media`;
+
+      // user already exists with the same userHandle
+      const userDoc = await db.doc(`users/${formValues.username}`).get();
+      if (userDoc.exists)
+        throw new AuthError(
+          'auth/username-already-taken',
+          'Authentication Failed'
         );
 
-      await axios.post(`${API_URL}/user/add-user`, {
-        userId: credentials.user?.uid,
-        email: credentials.user?.email,
-        userHandle: userCredentials.username
+      const credentials = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(formValues.email, formValues.password);
+
+      credentials.user?.updateProfile({
+        displayName: formValues.username,
+        photoURL: defaultPhotoUrl
       });
+
+      // send email verification link
+      await credentials.user?.sendEmailVerification();
+
+      const userDetails = {
+        userHandle: formValues.username,
+        email: credentials.user?.email,
+        bio: `Hi! I'm a new socializer!`,
+        location: 'Earth',
+        website: '',
+        numPosts: 0,
+        numSeeds: 0,
+        numConnects: 0,
+        profileImageURL: defaultPhotoUrl,
+        createdAt: new Date().toISOString(),
+        userId: credentials.user?.uid
+      };
+
+      await db
+        .collection('users')
+        .doc(formValues.username)
+        .set(userDetails);
+
+      setVerifEmailSent(true);
     } catch (err) {
       throw new AuthError(err.code, 'Authentication failed');
     }
@@ -58,8 +90,6 @@ export const RegisterForm: React.FC = () => {
     try {
       await signUpUser(values);
       setSigningUp(false);
-      // Redirect to feed
-      navigate('/home');
     } catch (err) {
       /**
        * - POSSIBLE ERRORS
@@ -219,21 +249,25 @@ export const RegisterForm: React.FC = () => {
 
           <Field
             name='acceptedTerms'
+            type='checkbox'
             render={({ input, meta }) => (
               <CheckboxFieldGrid>
                 <CheckboxInput {...input} type='checkbox' />
                 <FieldLabel margin={fieldLabelMargins}>
-                  <SmallText>
+                  <Text size={1.2}>
                     Accept <LinkText to=''>Terms and Conditions</LinkText>
-                  </SmallText>
+                  </Text>
                 </FieldLabel>
               </CheckboxFieldGrid>
             )}
           />
 
-          <SubmitErrorContainer>
+          <MetaTextContainer>
+            {verifEmailSent && !submitError && (
+              <Text size={1.2}>Verification email sent</Text>
+            )}
             <ErrorMessage>{submitError}</ErrorMessage>
-          </SubmitErrorContainer>
+          </MetaTextContainer>
 
           <ButtonContainer>
             <FancyButton onClick={handleSubmit}>
@@ -241,10 +275,10 @@ export const RegisterForm: React.FC = () => {
               <TextLoader loading={signingUp}>Authenticating...</TextLoader>
             </FancyButton>
 
-            <SmallText>
+            <Text size={1.2}>
               Already have an account? Click{' '}
               <LinkText to='/login'>here</LinkText> to sign in
-            </SmallText>
+            </Text>
           </ButtonContainer>
         </FormWrapper>
       )}
