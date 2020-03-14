@@ -1,16 +1,18 @@
 import React from 'react';
-import { Action } from './actions';
+import { Action } from './actionTypes';
 import { Post } from '../../types';
 
 type Dispatch = (action: Action) => void;
 export type State = {
   posts: Post[];
   fetchingPosts: boolean;
+  addingPost: boolean;
 };
 
-export const initialState = {
+export const initialState: State = {
   posts: [],
-  fetchingPosts: false
+  fetchingPosts: false,
+  addingPost: false
 };
 
 export const PostsStateContext = React.createContext<State | undefined>(
