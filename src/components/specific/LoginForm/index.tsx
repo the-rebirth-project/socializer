@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 import { navigate } from '@reach/router';
-import { AuthError } from '../../../helpers/AuthError';
+import { AuthError } from '../../../utils/AuthError';
 import { Form, Field } from 'react-final-form';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
@@ -13,9 +14,9 @@ import { FormWrapper, ButtonContainer } from './styles';
 import {
   FormFieldGrid,
   ErrorMessage,
-  SubmitErrorContainer,
+  MetaTextContainer,
   CheckboxFieldGrid
-} from '../RegisterForm/styles';
+} from '../../shared/FormStyles';
 import { TextLoader } from '../../shared/TextLoader';
 
 // TODO: Refactor LoginForm and RegisterForm into a single generic form component
@@ -28,12 +29,24 @@ type Values = {
 export const LoginForm: React.FC = () => {
   const [signingIn, setSigningIn] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [stayLoggedIn, setStayLoggedIn] = useState(true);
 
   const signInUser = async (values: Values) => {
     try {
-      await firebase
+      if (!stayLoggedIn) {
+        await firebase
+          .auth()
+          .setPersistence(firebase.auth.Auth.Persistence.SESSION);
+      }
+      const userCredentials = await firebase
         .auth()
         .signInWithEmailAndPassword(values.email, values.password);
+
+      // if email is not verified, throw error and resend verification email
+      if (!userCredentials.user?.emailVerified) {
+        await userCredentials.user?.sendEmailVerification();
+        throw new AuthError('auth/email-not-verified', 'Authentication failed');
+      }
     } catch (err) {
       console.log(err);
       throw new AuthError(err.code, 'Authentication failed');
@@ -56,6 +69,7 @@ export const LoginForm: React.FC = () => {
        * auth/user-disabled
        * auth/wrong-password
        * auth/user-not-found
+       * auth/email-not-verified
        * server/unavailable
        */
 
@@ -71,6 +85,9 @@ export const LoginForm: React.FC = () => {
           break;
         case 'auth/user-not-found':
           setSubmitError('User not found');
+          break;
+        case 'auth/email-not-verified':
+          setSubmitError('Email not verified. Please check your inbox.');
           break;
         case 'server/unavailable':
           setSubmitError('Server is currently unavailable');
@@ -154,7 +171,12 @@ export const LoginForm: React.FC = () => {
             type='checkbox'
             render={({ input, meta }) => (
               <CheckboxFieldGrid>
-                <CheckboxInput {...input} type='checkbox' />
+                <CheckboxInput
+                  {...input}
+                  type='checkbox'
+                  checked={stayLoggedIn}
+                  onClick={() => setStayLoggedIn(!stayLoggedIn)}
+                />
                 <FieldLabel margin={fieldLabelMargins}>
                   <SmallText>Stay logged in</SmallText>
                 </FieldLabel>
@@ -162,9 +184,9 @@ export const LoginForm: React.FC = () => {
             )}
           />
 
-          <SubmitErrorContainer>
+          <MetaTextContainer>
             <ErrorMessage>{submitError}</ErrorMessage>
-          </SubmitErrorContainer>
+          </MetaTextContainer>
 
           <ButtonContainer>
             <FancyButton onClick={handleSubmit}>
@@ -173,7 +195,8 @@ export const LoginForm: React.FC = () => {
             </FancyButton>
             <SmallText>
               Don't have an account? Click{' '}
-              <LinkText to='/register'>here</LinkText> to sign up
+              <LinkText to='/register'>here</LinkText> to sign up{' '}
+              <LinkText to='/forgot-password'>Forgot Password?</LinkText>
             </SmallText>
           </ButtonContainer>
         </FormWrapper>
