@@ -1,11 +1,6 @@
 import { Comment } from '../../types';
 
-export type Action =
-  | AddComment
-  | SetPostingComment
-  | SetPostingReply
-  | SetComments
-  | SetShowReplies;
+export type Action = AddComment | SetPostingComment | SetComments;
 
 type SetComments = {
   type: 'SET_COMMENTS';
@@ -20,17 +15,4 @@ type SetPostingComment = {
 type AddComment = {
   type: 'ADD_COMMENT';
   payload: Comment;
-};
-
-type SetShowReplies = {
-  type: 'SET_SHOW_REPLIES';
-  payload: boolean;
-};
-
-type SetPostingReply = {
-  type: 'SET_POSTING_REPLY';
-  payload: {
-    commentId: string;
-    value: boolean;
-  };
 };

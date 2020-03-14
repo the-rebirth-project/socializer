@@ -18,13 +18,7 @@ export const commentsReducer = (state: State, action: Action) => {
     case 'SET_POSTING_COMMENT':
       return {
         ...state,
-        postingComments: action.payload
-      };
-
-    case 'SET_SHOW_REPLIES':
-      return {
-        ...state,
-        showReplies: action.payload
+        postingComment: action.payload
       };
 
     default:
