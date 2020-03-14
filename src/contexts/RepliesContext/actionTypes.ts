@@ -40,12 +40,11 @@ type AddLocalReply = {
   payload: Reply;
 };
 
-type SetPostingReply = {
-  type: 'SET_POSTING_REPLY';
-  payload: boolean;
+type ResetLocalReplies = {
+  type: 'RESET_LOCAL_REPLIES';
 };
 
-type SetShowReplyForm = {
-  type: 'SET_SHOW_REPLY_FORM';
+type SetPostingReply = {
+  type: 'SET_POSTING_REPLY';
   payload: boolean;
 };
