@@ -6,14 +6,19 @@ type Dispatch = (action: Action) => void;
 export type State = {
   replies: Reply[];
   localReplies: Reply[];
-  showReplyForm: boolean;
+  fetchingReplies: boolean;
+  // we only need to fetch it replies from db once. afterwards we cache it in state
+  fetchedReplies: boolean;
+  showReplies: boolean;
   postingReply: boolean; // for loading logic
 };
 
 export const initialState: State = {
   replies: [],
   localReplies: [],
-  showReplyForm: false,
+  fetchingReplies: false,
+  showReplies: false,
+  fetchedReplies: false,
   postingReply: false
 };
 
