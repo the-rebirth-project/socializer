@@ -28,16 +28,14 @@ export const PostAdd: React.FC = () => {
   const postsState = usePostsState();
   const [postBody, setPostBody] = useState('');
 
-  const isPostBeingAdded =
-    postsState.posts[0] && postsState.posts[0].addingPost;
+  const isPostBeingAdded = postsState.posts[0] && postsState.addingPost;
 
   const onTextAreaChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPostBody(e.target.value);
   };
 
-  const onPostSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!isPostBeingAdded) {
+  const onPostSubmit = async () => {
+    if (!isPostBeingAdded && postBody) {
       // pass value of postBody to another variable as we'll reset the input state on submit
       const postInput = postBody;
       setPostBody('');
@@ -48,35 +46,31 @@ export const PostAdd: React.FC = () => {
         body: postInput,
         userHandle,
         userProfile,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        numComments: 0,
+        numSeeds: 0
       };
 
-      try {
-        postsDispatch({
-          type: 'SET_ADDING_POST',
-          payload: {
-            postId,
-            value: true
-          }
-        });
+      postsDispatch({
+        type: 'ADD_POST',
+        payload: {
+          ...newPost,
+          postId,
+          comments: [],
+          isSeeded: false
+        }
+      });
 
+      postsDispatch({
+        type: 'SET_ADDING_POST',
+        payload: true
+      });
+
+      try {
         await db
-          .collection('posts')
+          .collection(`users/${userState.userHandle}/posts`)
           .doc(postId)
           .set(newPost);
-
-        postsDispatch({
-          type: 'ADD_POST',
-          payload: {
-            ...newPost,
-            postId,
-            comments: [],
-            replies: [],
-            likes: [],
-            addingPost: false,
-            postingComment: false
-          }
-        });
       } catch (err) {
         // TODO: Handle error
         console.log(err);
@@ -84,10 +78,7 @@ export const PostAdd: React.FC = () => {
 
       postsDispatch({
         type: 'SET_ADDING_POST',
-        payload: {
-          postId,
-          value: false
-        }
+        payload: false
       });
     }
   };
@@ -106,24 +97,28 @@ export const PostAdd: React.FC = () => {
       </GradientBox>
 
       <Body>
-        <form onSubmit={onPostSubmit}>
-          <StyledTextArea
-            id='addpost'
-            placeholder='Add a post'
-            rows={30}
-            cols={100}
-            maxRows={10}
-            maxLength={3000}
-            value={postBody}
-            onChange={onTextAreaChanged}
-            required
-          />
-          <OpacityLoader loading={isPostBeingAdded ? 1 : 0} defaultOpacity={1}>
-            <PostButtonContainer>
-              <FancyButton type='submit'>Post</FancyButton>
-            </PostButtonContainer>
-          </OpacityLoader>
-        </form>
+        <StyledTextArea
+          id='addpost'
+          placeholder='Add a post'
+          rows={30}
+          cols={100}
+          maxRows={10}
+          maxLength={3000}
+          value={postBody}
+          onChange={onTextAreaChanged}
+          required
+        />
+        <OpacityLoader loading={isPostBeingAdded ? 1 : 0} defaultOpacity={1}>
+          <PostButtonContainer>
+            <FancyButton
+              type='submit'
+              onClick={onPostSubmit}
+              disabled={isPostBeingAdded}
+            >
+              Post
+            </FancyButton>
+          </PostButtonContainer>
+        </OpacityLoader>
       </Body>
     </Wrapper>
   );
