@@ -1,6 +1,5 @@
 import React from 'react';
-import { Action } from './actions';
-import { Post } from '../../types';
+import { Action } from './actionTypes';
 
 // current user state
 
@@ -8,18 +7,12 @@ type Dispatch = (action: Action) => void;
 export type State = {
   userHandle: string;
   userProfile: string;
-  userPosts: Post[];
   fetchingUser: boolean;
 };
-
-/**
- * We access the current user's id token by using onAuthStateChanged
- */
 
 export const initialState: State = {
   userHandle: '',
   userProfile: '',
-  userPosts: [],
   fetchingUser: false
 };
 

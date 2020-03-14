@@ -1,5 +1,3 @@
-import { Post } from '../../types/Post';
-
 export type Action = SetUser | SetFetchingUser;
 
 type SetUser = {
@@ -7,7 +5,6 @@ type SetUser = {
   payload: {
     userHandle: string;
     userProfile: string;
-    posts: Post[];
   };
 };
 

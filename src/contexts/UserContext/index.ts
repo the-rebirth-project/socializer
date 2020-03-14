@@ -1,3 +1,3 @@
 export * from './context';
 export * from './Provider';
-export * from './actions';
+export * from './actionTypes';
