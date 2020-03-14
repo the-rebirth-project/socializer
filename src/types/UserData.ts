@@ -1,9 +1,9 @@
 export interface UserData {
   userHandle: string;
-  userProfileImg: string;
+  profileImageURL: string;
   bio: string;
   location: string;
-  numConnects: number; // number of followers essentially
+  numSubscribers: number; // represents number of followers
   numSeeds: number;
   numPosts: number;
 }
