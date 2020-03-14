@@ -20,12 +20,14 @@ type SpinnerProps = {
 const SmallSpinnerStyles = css`
   border-width: 0.5rem;
   padding: 0.5rem;
+  width: 1rem;
 `;
 
 export const Spinner = styled.div<SpinnerProps>`
   border-radius: 50%;
   border: 1rem solid ${props => props.theme.colors.textColor};
   padding: 1rem;
+  width: 2rem;
   border-right-color: transparent;
   border-left-color: transparent;
   display: inline-block;
