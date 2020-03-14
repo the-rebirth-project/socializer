@@ -6,10 +6,22 @@ export const userProfileReducer = (state: State, action: Action) => {
     case 'SET_USER_PROFILE':
       return {
         ...state,
-        ...action.payload
+        userData: action.payload
+      };
+
+    case 'SET_FETCHING_DATA':
+      return {
+        ...state,
+        fetchingData: action.payload
+      };
+
+    case 'SET_IS_SUBSCRIBED':
+      return {
+        ...state,
+        isSubscribed: action.payload
       };
 
     default:
-      throw new Error('Unhandled action type in userProfileReducer');
+      throw new Error('Unhandled action type in UserProfileProvider');
   }
 };
