@@ -7,16 +7,24 @@ It should not be confused with UserContext nor with the profile image of a user 
 
 type Dispatch = (action: Action) => void;
 
-export interface State extends UserData {}
+export type State = {
+  userData: UserData;
+  fetchingData: boolean;
+  isSubscribed: boolean;
+};
 
 export const initialState: State = {
-  userHandle: '',
-  userProfileImg: '',
-  bio: '',
-  location: '',
-  numConnects: 0,
-  numPosts: 0,
-  numSeeds: 0
+  userData: {
+    userHandle: '',
+    profileImageURL: '',
+    bio: '',
+    location: '',
+    numSubscribers: 0,
+    numPosts: 0,
+    numSeeds: 0
+  },
+  fetchingData: false,
+  isSubscribed: false
 };
 
 export const UserProfileStateContext = React.createContext<State | undefined>(
