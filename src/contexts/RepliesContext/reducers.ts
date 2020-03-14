@@ -6,19 +6,43 @@ export const repliesReducer = (state: State, action: Action) => {
     case 'SET_REPLIES':
       return {
         ...state,
-        replies: [...state.replies, ...action.payload]
+        replies: action.payload
+      };
+
+    case 'SET_FETCHED_REPLIES':
+      return {
+        ...state,
+        fetchedReplies: action.payload
+      };
+
+    case 'SHOW_REPLIES':
+      return {
+        ...state,
+        showReplies: action.payload
+      };
+
+    case 'RESET_LOCAL_REPLIES':
+      return {
+        ...state,
+        localReplies: []
+      };
+
+    case 'SET_FETCHING_REPLIES':
+      return {
+        ...state,
+        fetchingReplies: action.payload
       };
 
     case 'ADD_REPLY':
       return {
         ...state,
-        replies: [...state.replies, action.payload]
+        replies: [action.payload, ...state.replies]
       };
 
     case 'ADD_LOCAL_REPLY':
       return {
         ...state,
-        localReplies: [...state.localReplies, action.payload]
+        localReplies: [action.payload, ...state.localReplies]
       };
 
     case 'SET_POSTING_REPLY':
@@ -27,12 +51,6 @@ export const repliesReducer = (state: State, action: Action) => {
         postingReply: action.payload
       };
 
-    case 'SET_SHOW_REPLY_FORM':
-      return {
-        ...state,
-        showReplyForm: action.payload
-      }
-    
     default:
       throw new Error('Unhandled action type in RepliesContext');
   }
