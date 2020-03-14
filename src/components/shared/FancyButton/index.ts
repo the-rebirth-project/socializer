@@ -43,4 +43,8 @@ export const FancyButton = styled.button<FancyButtonProps>`
   :active {
     outline: none;
   }
+
+  :focus {
+    outline: none;
+  }
 `;
