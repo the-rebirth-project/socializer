@@ -18,9 +18,6 @@
   publish = "build/"
   command = "npm run build"
 
-  environment = {API_KEY="AIzaSyCN6y89ruVX7xESbDjp6UXwBJ7f5Z7sEi8",AUTH_DOMAIN="socializer-e77ce.firebaseapp.com",DATABASE_URL="https://socializer-e77ce.firebaseio.com",PROJECT_ID="socializer-e77ce",STORAGE_BUCKET="socializer-e77ce.appspot.com",MESSAGING_SENDER_ID="155031946649",APP_ID="1:155031946649:web:8c9494f2a17cc80bdfff08",MEASUREMENT_ID="G-QL72HQ5GHC"}
-
-
 # The following redirect is intended for use with most SPAs that handle
 # routing internally.
 [[redirects]]
