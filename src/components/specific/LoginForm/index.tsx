@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { navigate } from '@reach/router';
-import { AuthError } from '../../../utils/AuthError';
 import { Form, Field } from 'react-final-form';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
@@ -18,6 +17,8 @@ import {
   CheckboxFieldGrid
 } from '../../shared/FormStyles';
 import { TextLoader } from '../../shared/TextLoader';
+import { AuthError } from '../../../utils/AuthError';
+import { required } from '../../../utils/formValidators';
 
 // TODO: Refactor LoginForm and RegisterForm into a single generic form component
 
@@ -45,6 +46,7 @@ export const LoginForm: React.FC = () => {
       // if email is not verified, throw error and resend verification email
       if (!userCredentials.user?.emailVerified) {
         await userCredentials.user?.sendEmailVerification();
+        await firebase.auth().signOut();
         throw new AuthError('auth/email-not-verified', 'Authentication failed');
       }
     } catch (err) {
@@ -108,8 +110,6 @@ export const LoginForm: React.FC = () => {
     bottom: 0,
     top: 0
   };
-
-  const required = (value: string) => (value ? undefined : 'Required');
 
   return (
     <Form

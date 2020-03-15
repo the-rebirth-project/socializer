@@ -18,6 +18,15 @@ import {
   MetaTextContainer,
   CheckboxFieldGrid
 } from '../../shared/FormStyles';
+import {
+  composeValidators,
+  required,
+  noWhitespace,
+  passwordValidator,
+  emailValidator,
+  minChar,
+  maxChar
+} from '../../../utils/formValidators';
 import { FormWrapper, ButtonContainer } from './styles';
 
 type FormValues = {
@@ -77,6 +86,8 @@ export const RegisterForm: React.FC = () => {
         .doc(formValues.username)
         .set(userDetails);
 
+      // immediately log out the user. wait until email is verified
+      await firebase.auth().signOut();
       setVerifEmailSent(true);
     } catch (err) {
       throw new AuthError(err.code, 'Authentication failed');
@@ -138,23 +149,6 @@ export const RegisterForm: React.FC = () => {
     top: 0
   };
 
-  const required = (value: any) => (value ? undefined : 'Required');
-  const noWhitespace = (value: any) =>
-    /\s/g.test(value) ? 'No spaces allowed' : undefined;
-  const passwordValidator = (value: string) =>
-    value.length > 8 ? undefined : 'Must be more than 8 characters';
-  const emailValidator = (value: string) =>
-    /\s/g.test(value) || !value.includes('@') ? 'Invalid email' : undefined;
-  const minChar = (min: number) => (value: string) =>
-    value.length >= min ? undefined : `Must be more than ${min - 1} characters`;
-  const maxChar = (max: number) => (value: string) =>
-    value.length <= max ? undefined : `Must be less than ${max - 1} characters`;
-  const composeValidators = (...validators: any[]) => (value: any) =>
-    validators.reduce(
-      (error, validator) => error || validator(value),
-      undefined
-    );
-
   return (
     <Form
       onSubmit={onSubmit}
@@ -185,9 +179,6 @@ export const RegisterForm: React.FC = () => {
                   autoComplete='off'
                   placeholder='Enter your username'
                   hasError={meta.error && meta.touched}
-                  onKeyPress={e => {
-                    if (e.which === 32) return false;
-                  }}
                 />
               </FormFieldGrid>
             )}
