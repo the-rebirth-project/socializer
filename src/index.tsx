@@ -8,7 +8,6 @@ import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './themes/mainTheme';
 
 const FBConfig = require('./config/index');
-console.log(process.env);
 firebase.initializeApp(FBConfig);
 
 ReactDOM.render(
