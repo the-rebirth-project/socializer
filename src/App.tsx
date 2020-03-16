@@ -27,36 +27,43 @@ const GlobalStyle = createGlobalStyle`
 const App: React.FC = () => {
   const dispatch = useUserDispatch();
 
+  // we only have to try getting the user if they're in any other location except register
   useEffect(() => {
-    // SET USER
-    firebase.auth().onAuthStateChanged(async user => {
-      if (user) {
-        try {
-          dispatch({ type: 'SET_FETCHING_USER', payload: true });
-          const snap = await firebase
-            .firestore()
-            .collection('users')
-            .where('userId', '==', user.uid)
-            .limit(1)
-            .get();
-          const userDocData = snap.docs[0].data();
+    if (window.location.pathname !== '/register') {
+      // SET USER
+      firebase.auth().onAuthStateChanged(async user => {
+        if (user) {
+          try {
+            dispatch({ type: 'SET_FETCHING_USER', payload: true });
+            const snap = await firebase
+              .firestore()
+              .collection('users')
+              .where('userId', '==', user.uid)
+              .limit(1)
+              .get();
+            const userDocData = snap.docs[0].data();
 
-          dispatch({
-            type: 'SET_USER',
-            payload: {
-              userHandle: userDocData.userHandle,
-              userProfile: userDocData.profileImageURL
-            }
-          });
-          dispatch({ type: 'SET_FETCHING_USER', payload: false });
-        } catch (err) {
-          // TODO: Handle error
-          console.log(err);
+            dispatch({
+              type: 'SET_USER',
+              payload: {
+                email: userDocData.email,
+                userId: user.uid,
+                userHandle: userDocData.userHandle,
+                userProfile: userDocData.profileImageURL,
+                bio: userDocData.bio,
+                location: userDocData.location
+              }
+            });
+            dispatch({ type: 'SET_FETCHING_USER', payload: false });
+          } catch (err) {
+            // TODO: Handle error
+            console.log(err);
+          }
+        } else {
+          navigate('/login');
         }
-      } else {
-        navigate('/login');
-      }
-    });
+      });
+    }
   }, [dispatch]);
 
   return (
