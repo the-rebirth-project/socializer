@@ -10,13 +10,9 @@ const loadingAnim = keyframes`
   }
 `;
 
-interface WrapperProps {
-  fontSize?: number; // in rem
-}
-
-export const Wrapper = styled.span<WrapperProps>`
+export const Wrapper = styled.span`
   opacity: 0.8;
-  font-size: ${props => (props.fontSize ? props.fontSize : 1.4)}rem;
-  color: ${props => props.theme.colors.textColor};
+  font-size: inherit;
+  color: inherit;
   animation: ${loadingAnim} 1s infinite ease-in-out;
 `;

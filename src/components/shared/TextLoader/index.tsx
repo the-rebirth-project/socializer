@@ -3,15 +3,11 @@ import { Wrapper } from './styles';
 
 interface TextLoaderProps {
   loading: boolean;
-  fontSize?: number;
 }
 
 export const TextLoader: React.FC<TextLoaderProps> = ({
   children,
-  loading,
-  fontSize
+  loading
 }) => {
-  return (
-    <div>{loading && <Wrapper fontSize={fontSize}>{children}</Wrapper>}</div>
-  );
+  return <div>{loading && <Wrapper>{children}</Wrapper>}</div>;
 };
