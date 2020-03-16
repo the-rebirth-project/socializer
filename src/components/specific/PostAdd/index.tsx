@@ -39,12 +39,12 @@ export const PostAdd: React.FC = () => {
       // pass value of postBody to another variable as we'll reset the input state on submit
       const postInput = postBody;
       setPostBody('');
-      const { userHandle, userProfile } = userState;
+      const { userHandle, userProfile, userId } = userState;
       const postId = uuid();
 
       const newPost = {
         body: postInput,
-        userHandle,
+        userId,
         userProfile,
         createdAt: new Date().toISOString(),
         numComments: 0,
@@ -55,6 +55,7 @@ export const PostAdd: React.FC = () => {
         type: 'ADD_POST',
         payload: {
           ...newPost,
+          userHandle,
           postId,
           comments: [],
           isSeeded: false
@@ -68,7 +69,12 @@ export const PostAdd: React.FC = () => {
 
       try {
         await db
-          .collection(`users/${userState.userHandle}/posts`)
+          .collection(`users/${userState.userId}/posts`)
+          .doc(postId)
+          .set(newPost);
+        // also add to feed
+        await db
+          .collection(`users/${userState.userId}/feed`)
           .doc(postId)
           .set(newPost);
       } catch (err) {
