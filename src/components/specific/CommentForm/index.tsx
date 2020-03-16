@@ -9,15 +9,14 @@ import {
 } from '../../../contexts/CommentsContext';
 import { SendButton } from '../../shared/SendButton';
 import { Text } from '../../shared/Text';
-import { CommentReplyTextArea } from '../../shared/CommentReplyTextArea';
+import { StyledTextArea } from '../../shared/StyledTextArea';
 import { CommentReplyFormContainer } from '../../shared/CommentReplyFormContainer';
 import { OpacityLoader } from '../../shared/OpacityLoader';
-import { Comment } from '../../../types';
 import { Wrapper } from './styles';
 
 type CommentFormProps = {
   postId: string;
-  postUserHandle: string;
+  postUserId: string;
 };
 
 /* 
@@ -27,12 +26,12 @@ type CommentFormProps = {
 
 export const CommentForm: React.FC<CommentFormProps> = ({
   postId,
-  postUserHandle
+  postUserId
 }) => {
   const db = firebase.firestore();
 
   const [commentText, setCommentText] = useState('');
-  const { userHandle } = useUserState();
+  const { userHandle, userId } = useUserState();
   const commentsDispatch = useCommentsDispatch();
   const commentsState = useCommentsState();
 
@@ -43,9 +42,9 @@ export const CommentForm: React.FC<CommentFormProps> = ({
       // reset input
       setCommentText('');
       const commentId = uuid();
-      const newComment: Comment = {
+      const newComment = {
         id: commentId,
-        userHandle,
+        userId,
         body: commentInput,
         createdAt: new Date().toISOString(),
         numReplies: 0
@@ -53,7 +52,10 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 
       commentsDispatch({
         type: 'ADD_COMMENT',
-        payload: newComment
+        payload: {
+          ...newComment,
+          userHandle
+        }
       });
 
       commentsDispatch({
@@ -63,7 +65,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 
       try {
         await db
-          .doc(`users/${postUserHandle}/posts/${postId}`)
+          .doc(`users/${postUserId}/posts/${postId}`)
           .collection('comments')
           .doc(commentId)
           .set(newComment);
@@ -90,7 +92,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
           {userHandle}
         </Text>
         <CommentReplyFormContainer>
-          <CommentReplyTextArea
+          <StyledTextArea
             maxRows={5}
             maxLength={1500}
             placeholder='Add a comment'

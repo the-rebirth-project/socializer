@@ -13,14 +13,14 @@ type CommentsProps = {
   comments: Comment[];
   postId: string;
   numComments: number;
-  postUserHandle: string;
+  postUserId: string;
 };
 
 export const Comments: React.FC<CommentsProps> = ({
   comments,
   postId,
   numComments,
-  postUserHandle
+  postUserId
 }) => {
   const commentsState = useCommentsState();
   const commentsDispatch = useCommentsDispatch();
@@ -44,7 +44,7 @@ export const Comments: React.FC<CommentsProps> = ({
                   comment={comment}
                   key={comment.id}
                   postId={postId}
-                  postUserHandle={postUserHandle}
+                  postUserId={postUserId}
                   isLastComment={
                     idx === commentsState.comments.length - 1 ? true : false
                   }

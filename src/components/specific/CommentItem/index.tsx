@@ -11,21 +11,21 @@ import { Replies } from '../Replies';
 import { Text } from '../../shared/Text';
 import { CommentReplyWrapper } from '../../shared/CommentReplyWrapper';
 import { OpacityLoader } from '../../shared/OpacityLoader';
-import { Comment, Reply } from '../../../types';
+import { Comment } from '../../../types';
 import { ClickableSpan } from './styles';
 
 type CommentItemProps = {
   isLastComment: boolean;
   comment: Comment;
   postId: string;
-  postUserHandle: string;
+  postUserId: string;
 };
 
 export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   isLastComment,
   postId,
-  postUserHandle
+  postUserId
 }) => {
   const db = firebase.firestore();
   const textSize = 1.35;
@@ -49,20 +49,29 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         repliesDispatch({ type: 'SET_FETCHING_REPLIES', payload: true });
         try {
           const repliesCollection = await db
-            .doc(`posts/${postId}/comments/${comment.id}`)
+            .doc(`users/${postUserId}/posts/${postId}/comments/${comment.id}`)
             .collection('replies')
             .get();
 
-          const replies: Reply[] = repliesCollection.docs.map(d => {
+          const repliesDataPromises = repliesCollection.docs.map(async d => {
+            const userDoc = await db
+              .collection('users')
+              .doc(d.data().userId)
+              .get();
             return {
               id: d.id,
               body: d.data().body,
               createdAt: d.data().createdAt,
-              userHandle: d.data().userHandle
+              userId: d.data().userId,
+              userHandle: userDoc.exists
+                ? userDoc.data()?.userHandle
+                : '[deleted user]'
             };
           });
 
-          repliesDispatch({ type: 'SET_REPLIES', payload: replies });
+          const repliesData = await Promise.all(repliesDataPromises);
+
+          repliesDispatch({ type: 'SET_REPLIES', payload: repliesData });
           repliesDispatch({ type: 'SET_FETCHED_REPLIES', payload: true });
         } catch (err) {
           // TODO: Handle error
@@ -114,7 +123,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         commentUserHandle={comment.userHandle}
         postId={postId}
         commentId={comment.id}
-        postUserHandle={postUserHandle}
+        postUserId={postUserId}
       />
     </CommentReplyWrapper>
   );
