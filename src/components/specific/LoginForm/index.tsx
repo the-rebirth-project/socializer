@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { useAlert } from 'react-alert';
 import { navigate } from '@reach/router';
 import { Form, Field } from 'react-final-form';
+import { useUserState } from '../../../contexts/UserContext';
+import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
 import { FancyButton } from '../../shared/FancyButton';
@@ -17,7 +20,7 @@ import {
   CheckboxFieldGrid
 } from '../../shared/FormStyles';
 import { TextLoader } from '../../shared/TextLoader';
-import { AuthError } from '../../../utils/AuthError';
+import { CustomError } from '../../../utils/CustomError';
 import { required } from '../../../utils/formValidators';
 
 // TODO: Refactor LoginForm and RegisterForm into a single generic form component
@@ -27,10 +30,22 @@ type Values = {
   password: string;
 };
 
-export const LoginForm: React.FC = () => {
+type LoginFormProps = {
+  reauthenticate?: boolean;
+};
+
+export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
   const [signingIn, setSigningIn] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [stayLoggedIn, setStayLoggedIn] = useState(true);
+  const userState = useUserState();
+  const alert = useAlert();
+  const initialValues: Values = reauthenticate
+    ? {
+        email: userState.email,
+        password: ''
+      }
+    : { email: '', password: '' };
 
   const signInUser = async (values: Values) => {
     try {
@@ -47,23 +62,45 @@ export const LoginForm: React.FC = () => {
       if (!userCredentials.user?.emailVerified) {
         await userCredentials.user?.sendEmailVerification();
         await firebase.auth().signOut();
-        throw new AuthError('auth/email-not-verified', 'Authentication failed');
+        throw new CustomError(
+          'auth/email-not-verified',
+          'Authentication failed'
+        );
       }
     } catch (err) {
-      console.log(err);
-      throw new AuthError(err.code, 'Authentication failed');
+      throw new CustomError(err.code, 'Authentication failed');
+    }
+  };
+
+  const reauthenticateUser = async (values: Values) => {
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      values.email,
+      values.password
+    );
+
+    try {
+      const userCredentials = await firebase
+        .auth()
+        .signInWithEmailAndPassword(values.email, values.password);
+
+      await userCredentials.user?.reauthenticateWithCredential(credential);
+    } catch (err) {
+      throw new CustomError(err.code, 'Reauthentication failed');
     }
   };
 
   const onSubmit = async (values: Values) => {
-    setSigningIn(true);
     setSubmitError('');
+    setSigningIn(true);
     try {
-      await signInUser(values);
-      setSigningIn(false);
-      setSubmitError('');
-      // do redirects here
-      navigate('/home');
+      if (reauthenticate) {
+        await reauthenticateUser(values);
+        alert.success('Successfully reauthenticated');
+        navigate('/account/edit');
+      } else {
+        await signInUser(values);
+        navigate('/home');
+      }
     } catch (err) {
       /**
        * - POSSIBLE ERRORS:
@@ -74,6 +111,7 @@ export const LoginForm: React.FC = () => {
        * auth/email-not-verified
        * server/unavailable
        */
+      alert.error('Authentication failed');
 
       switch (err.code) {
         case 'auth/invalid-email':
@@ -91,6 +129,9 @@ export const LoginForm: React.FC = () => {
         case 'auth/email-not-verified':
           setSubmitError('Email not verified. Please check your inbox.');
           break;
+        case 'auth/user-mismatch':
+          setSubmitError('User does not correspond to signed in user');
+          break;
         case 'server/unavailable':
           setSubmitError('Server is currently unavailable');
           break;
@@ -98,10 +139,15 @@ export const LoginForm: React.FC = () => {
           setSubmitError('An unexpected error has occured');
           break;
       }
-
-      setSigningIn(false);
     }
+
+    setSigningIn(false);
   };
+
+  // Sign out user just in case they're signed in
+  useEffect(() => {
+    firebase.auth().signOut();
+  }, []);
 
   // these are in rem units
   const fieldLabelMargins = {
