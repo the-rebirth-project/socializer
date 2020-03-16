@@ -40,11 +40,11 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
 
     setIsSeeded(true);
     await db
-      .doc(`users/${post.userHandle}/posts/${postId}`)
+      .doc(`users/${post.userId}/posts/${postId}`)
       .collection('seeds')
-      .doc(userState.userHandle)
+      .doc(userState.userId)
       .set({
-        userHandle: userState.userHandle,
+        userId: userState.userId,
         userProfile: userState.userProfile
       });
   };
@@ -54,9 +54,9 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
 
     setIsSeeded(false);
     await db
-      .doc(`users/${post.userHandle}/posts/${postId}`)
+      .doc(`users/${post.userId}/posts/${postId}`)
       .collection('seeds')
-      .doc(userState.userHandle)
+      .doc(userState.userId)
       .delete();
   };
 
@@ -108,12 +108,9 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
               comments={post.comments}
               postId={post.postId}
               numComments={post.numComments}
-              postUserHandle={post.userHandle}
+              postUserId={post.userId}
             />
-            <CommentForm
-              postId={post.postId}
-              postUserHandle={post.userHandle}
-            />
+            <CommentForm postId={post.postId} postUserId={post.userId} />
           </CommentsProvider>
         </PostBody>
       </OpacityLoader>
