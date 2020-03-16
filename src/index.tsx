@@ -1,19 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import { positions, Provider as AlertProvider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
 import firebase from 'firebase/app';
+import { ThemeProvider } from 'styled-components';
 import { UserContextProvider } from './contexts/UserContext';
 import * as serviceWorker from './serviceWorker';
-import { ThemeProvider } from 'styled-components';
 import { mainTheme } from './themes/mainTheme';
+import App from './App';
 
 const FBConfig = require('./config/index');
 firebase.initializeApp(FBConfig);
 
+const alertOptions = {
+  timeout: 5000,
+  position: positions.BOTTOM_CENTER
+};
+
 ReactDOM.render(
   <ThemeProvider theme={mainTheme}>
     <UserContextProvider>
-      <App />
+      <AlertProvider template={AlertTemplate} {...alertOptions}>
+        <App />
+      </AlertProvider>
     </UserContextProvider>
   </ThemeProvider>,
   document.getElementById('root')
