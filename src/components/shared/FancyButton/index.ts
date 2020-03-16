@@ -37,7 +37,17 @@ export const FancyButton = styled.button<FancyButtonProps>`
 
   :disabled {
     cursor: default;
-    opacity: 0.8;
+    opacity: 0.7;
+    box-shadow: none;
+
+    :hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    :active {
+      transform: none;
+    }
   }
 
   :active {
