@@ -12,6 +12,7 @@ export const Wrapper = styled.span<WrapperProps>`
   opacity: ${props => (props.opacity ? props.opacity : 1)};
   font-weight: ${props => (props.weight ? props.weight : 400)};
   white-space: pre-line;
+  text-align: inherit;
 
   transition: all 0.15s ease-in-out;
 `;
