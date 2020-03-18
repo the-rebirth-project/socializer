@@ -6,6 +6,7 @@ import 'firebase/firestore';
 import { createGlobalStyle } from 'styled-components';
 import { useUserDispatch } from './contexts/UserContext';
 import { Routes } from './Routes';
+import { TopBar, TopBarBottomMargin } from './components/shared/TopBar';
 
 const GlobalStyle = createGlobalStyle`
   *, *::after, *::before {
@@ -60,7 +61,8 @@ const App: React.FC = () => {
             console.log(err);
           }
         } else {
-          navigate('/login');
+          // no need of doing this in the edit section. deletion logic handles the navigation
+          if (window.location.pathname !== '/account/edit') navigate('/login');
         }
       });
     }
@@ -69,6 +71,9 @@ const App: React.FC = () => {
   return (
     <div>
       <GlobalStyle />
+      <header style={{ marginBottom: `${TopBarBottomMargin}rem` }}>
+        <TopBar />
+      </header>
       <Routes />
     </div>
   );
