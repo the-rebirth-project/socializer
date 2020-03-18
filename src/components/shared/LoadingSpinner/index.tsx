@@ -2,7 +2,13 @@ import React from 'react';
 import { Spinner, Wrapper } from './styles';
 
 type LoadingSpinnerProps = {
-  loading: number; // 1 for true and 0 for false
+  /**
+   * Provide 1 for true or 0 for false. This is to silence warnings from React.
+   */
+  loading: number;
+  /**
+   * Setting this to true results in the Spinner being absolutely positioned in the centre of the relative element.
+   */
   centerSpinner?: boolean; // centers spinner as a fixed element
   small?: boolean;
 };
