@@ -11,5 +11,6 @@ export const Wrapper = styled(Img)<WrapperProps>`
   height: ${props => (props.sizeScaling ? props.sizeScaling * size : size)}rem;
   width: ${props => (props.sizeScaling ? props.sizeScaling * size : size)}rem;
   border-radius: 50%;
+  border: 2px solid ${props => props.theme.colors.textColor};
   object-fit: cover;
 `;
