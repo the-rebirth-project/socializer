@@ -1,20 +1,22 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { PostItem } from '../../shared/PostItem';
 import { PostAdd } from '../PostAdd';
+import { PostItem } from '../../shared/PostItem';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   usePostsState,
   usePostsDispatch
 } from '../../../contexts/PostsContext';
+import { useMounted } from '../../../hooks/useMounted';
 import { Post } from '../../../types';
 import { Wrapper } from './styles';
 
 export const Posts: React.FC = () => {
   const db = firebase.firestore();
   const state = usePostsState();
+  const isMounted = useMounted();
   const userState = useUserState();
   const dispatch = usePostsDispatch();
   const shouldLoad = userState.fetchingUser || state.fetchingPosts;
@@ -34,62 +36,86 @@ export const Posts: React.FC = () => {
     ) => {
       const docDataPromises: Promise<any>[] = docs.map(async doc => {
         const commentsCollection = await db
-          .doc(`users/${userState.userHandle}/feed/${doc.id}`)
+          .doc(`users/${userState.userId}/feed/${doc.id}`)
           .collection('comments')
           .orderBy('createdAt', 'desc')
           .get();
 
-        const commentsData = commentsCollection.docs.map(d => {
+        const commentsDataPromises = commentsCollection.docs.map(async d => {
+          const userDoc = await db
+            .collection('users')
+            .doc(d.data().userId)
+            .get();
           return {
             id: d.id,
-            ...d.data()
+            ...d.data(),
+            userHandle: userDoc.exists
+              ? userDoc.data()?.userHandle
+              : '[deleted user]'
           };
         });
 
+        const commentsData = await Promise.all(commentsDataPromises);
+
         const seedDoc = await db
-          .doc(`users/${userState.userHandle}/feed/${doc.id}`)
+          .doc(`users/${userState.userId}/feed/${doc.id}`)
           .collection('seeds')
-          .doc(userState.userHandle)
+          .doc(userState.userId)
           .get();
+
+        const userDoc = await db.doc(`users/${doc.data().userId}`).get();
 
         return {
           postId: doc.id,
           ...doc.data(),
+          userHandle: userDoc.exists
+            ? userDoc.data()?.userHandle
+            : '[deleted user]',
+          userProfile: userDoc.exists
+            ? userDoc.data()?.profileImageURL
+            : doc.data().userProfile,
           comments: commentsData,
           isSeeded: seedDoc.exists
         };
       });
       const docData: Post[] = await Promise.all(docDataPromises);
 
-      dispatch({ type: 'SET_POSTS', payload: docData });
+      isMounted.current && dispatch({ type: 'SET_POSTS', payload: docData });
     },
-    [db, dispatch, userState.userHandle]
+    [db, dispatch, userState.userId, isMounted]
   );
 
   // get initial posts
   const getPosts = async () => {
     if (!userState.fetchingUser && userState.userHandle) {
-      dispatch({ type: 'SET_FETCHING_POSTS', payload: true });
+      isMounted.current &&
+        dispatch({ type: 'SET_FETCHING_POSTS', payload: true });
       try {
         const querySnapshot = await db
-          .doc(`users/${userState.userHandle}`)
+          .doc(`users/${userState.userId}`)
           .collection('feed')
           .orderBy('createdAt', 'desc')
           .limit(postsLimit)
           .get();
 
-        setLastVisiblePost(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        isMounted.current &&
+          setLastVisiblePost(querySnapshot.docs[querySnapshot.docs.length - 1]);
+
         await mapToPosts(querySnapshot.docs);
       } catch (err) {
         // TODO: Handle error
         console.log(err);
       }
 
-      dispatch({ type: 'SET_FETCHING_POSTS', payload: false });
+      isMounted.current &&
+        dispatch({ type: 'SET_FETCHING_POSTS', payload: false });
     }
   };
 
-  const memoizedGetPosts = useCallback(getPosts, [userState.fetchingUser]);
+  const memoizedGetPosts = useCallback(getPosts, [
+    userState.fetchingUser,
+    isMounted
+  ]);
 
   useEffect(() => {
     memoizedGetPosts();
@@ -102,11 +128,16 @@ export const Posts: React.FC = () => {
       if (fetchingMorePosts || maxPostsFetched) return;
       if (observer.current) observer.current?.disconnect();
       observer.current = new IntersectionObserver(async entries => {
-        if (entries[0].isIntersecting && !maxPostsFetched && lastVisiblePost) {
+        if (
+          entries[0].isIntersecting &&
+          !maxPostsFetched &&
+          lastVisiblePost &&
+          isMounted.current
+        ) {
           // append more posts
           setFetchingMorePosts(true);
           const querySnapshot = await db
-            .doc(`users/${userState.userHandle}`)
+            .doc(`users/${userState.userId}`)
             .collection('feed')
             .orderBy('createdAt', 'desc')
             .startAfter(lastVisiblePost)
@@ -130,12 +161,13 @@ export const Posts: React.FC = () => {
       if (node) observer.current.observe(node);
     },
     [
+      isMounted,
       fetchingMorePosts,
       maxPostsFetched,
       db,
       lastVisiblePost,
       mapToPosts,
-      userState.userHandle
+      userState.userId
     ]
   );
 

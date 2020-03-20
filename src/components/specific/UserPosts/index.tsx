@@ -7,6 +7,7 @@ import {
   usePostsState,
   usePostsDispatch
 } from '../../../contexts/PostsContext';
+import { useMounted } from '../../../hooks/useMounted';
 import { PostItem } from '../../shared/PostItem';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { Post } from '../../../types';
@@ -14,6 +15,7 @@ import { Wrapper } from './styles';
 
 export const UserPosts: React.FC = () => {
   const db = firebase.firestore();
+  const isMounted = useMounted();
   const userState = useUserState();
   const postsState = usePostsState();
   const postsDispatch = usePostsDispatch();
@@ -32,29 +34,49 @@ export const UserPosts: React.FC = () => {
     ) => {
       const docDataPromises: Promise<any>[] = docs.map(async doc => {
         const commentsCollection = await db
-          .doc(`users/${userData.userHandle}`)
+          .doc(`users/${userData.userId}`)
           .collection('posts')
           .doc(doc.id)
           .collection('comments')
           .orderBy('createdAt', 'desc')
           .get();
 
-        const commentsData = commentsCollection.docs.map(d => {
+        const commentsDataPromises = commentsCollection.docs.map(async d => {
+          const userDoc = await db
+            .collection('users')
+            .doc(d.data().userId)
+            .get();
           return {
             id: d.id,
-            ...d.data()
+            ...d.data(),
+            userHandle: userDoc.exists
+              ? userDoc.data()?.userHandle
+              : '[deleted user]'
           };
         });
 
+        const commentsData = await Promise.all(commentsDataPromises);
+
         const seedDoc = await db
-          .doc(`users/${userData.userHandle}/posts/${doc.id}`)
+          .doc(`users/${userData.userId}/posts/${doc.id}`)
           .collection('seeds')
-          .doc(userState.userHandle)
+          .doc(userState.userId)
+          .get();
+
+        const userDoc = await db
+          .collection('users')
+          .doc(doc.data().userId)
           .get();
 
         return {
           postId: doc.id,
           ...doc.data(),
+          userHandle: userDoc.exists
+            ? userDoc.data()?.userHandle
+            : '[deleted user]',
+          userProfile: userDoc.exists
+            ? userDoc.data()?.profileImageURL
+            : doc.data().userProfile,
           comments: commentsData,
           isSeeded: seedDoc.exists
         };
@@ -62,30 +84,34 @@ export const UserPosts: React.FC = () => {
 
       const docData: Post[] = await Promise.all(docDataPromises);
 
-      postsDispatch({ type: 'SET_POSTS', payload: docData });
+      isMounted.current &&
+        postsDispatch({ type: 'SET_POSTS', payload: docData });
     },
-    [db, userData.userHandle, userState.userHandle, postsDispatch]
+    [db, postsDispatch, userState.userId, userData.userId, isMounted]
   );
 
   const getUserPosts = async () => {
-    postsDispatch({ type: 'RESET_POSTS' });
-    if (userData.userHandle) {
+    isMounted.current && postsDispatch({ type: 'RESET_POSTS' });
+    if (userData.userId) {
       try {
-        postsDispatch({ type: 'SET_FETCHING_POSTS', payload: true });
+        isMounted.current &&
+          postsDispatch({ type: 'SET_FETCHING_POSTS', payload: true });
         const snap = await db
-          .doc(`users/${userData.userHandle}`)
+          .doc(`users/${userData.userId}`)
           .collection('posts')
           .orderBy('createdAt', 'desc')
           .limit(5)
           .get();
 
-        setLastVisiblePost(snap.docs[snap.docs.length - 1]);
+        isMounted.current &&
+          setLastVisiblePost(snap.docs[snap.docs.length - 1]);
         await mapToPosts(snap.docs);
       } catch (err) {
         // TODO: Handle error
         console.log(err);
       }
-      postsDispatch({ type: 'SET_FETCHING_POSTS', payload: false });
+      isMounted.current &&
+        postsDispatch({ type: 'SET_FETCHING_POSTS', payload: false });
     }
   };
 
@@ -102,9 +128,9 @@ export const UserPosts: React.FC = () => {
       if (observer.current) observer.current?.disconnect();
       observer.current = new IntersectionObserver(async entries => {
         if (entries[0].isIntersecting && !maxPostsFetched && lastVisiblePost) {
-          setFetchingMorePosts(true);
+          isMounted.current && setFetchingMorePosts(true);
           const snap = await db
-            .doc(`users/${userData.userHandle}`)
+            .doc(`users/${userData.userId}`)
             .collection('posts')
             .orderBy('createdAt', 'desc')
             .startAfter(lastVisiblePost)
@@ -112,13 +138,14 @@ export const UserPosts: React.FC = () => {
             .get();
 
           if (snap.docs.length > 0) {
-            setLastVisiblePost(snap.docs[snap.docs.length - 1]);
+            isMounted.current &&
+              setLastVisiblePost(snap.docs[snap.docs.length - 1]);
             await mapToPosts(snap.docs);
           } else {
-            setMaxPostsFetched(true);
+            isMounted.current && setMaxPostsFetched(true);
           }
 
-          setFetchingMorePosts(false);
+          isMounted.current && setFetchingMorePosts(false);
         }
       });
 
@@ -130,7 +157,8 @@ export const UserPosts: React.FC = () => {
       lastVisiblePost,
       maxPostsFetched,
       mapToPosts,
-      userData.userHandle
+      userData.userId,
+      isMounted
     ]
   );
 
@@ -145,7 +173,7 @@ export const UserPosts: React.FC = () => {
               </div>
             );
           } else {
-            return <PostItem post={post} />;
+            return <PostItem post={post} key={post.postId} />;
           }
         })}
       </Wrapper>
