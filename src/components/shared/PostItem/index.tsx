@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
+import uuid from 'uuid/v4';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,6 +25,7 @@ import {
   ParagraphText,
   SvgWrapper
 } from './styles';
+import { LinkText } from '../LinkText';
 
 type PostItemProps = {
   post: Post;
@@ -34,6 +36,7 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
   const db = firebase.firestore();
   const [isSeeded, setIsSeeded] = useState(post.isSeeded);
   const userState = useUserState();
+  const [numSeeds, setNumSeeds] = useState(post.numSeeds);
 
   const seedPost = async () => {
     const { postId } = post;
@@ -62,8 +65,10 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
 
   const onSeedClick = () => {
     if (isSeeded) {
+      setNumSeeds(numSeeds - 1);
       unseedPost();
     } else {
+      setNumSeeds(numSeeds + 1);
       seedPost();
     }
   };
@@ -82,7 +87,9 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
             <PostMetadata>
               <UsernameContainer>
                 <Text weight={700} size={1.6}>
-                  {post.userHandle}
+                  <LinkText to={`/users/${post.userHandle}`}>
+                    {post.userHandle}
+                  </LinkText>
                 </Text>
               </UsernameContainer>
 
@@ -91,8 +98,8 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
                 {moment(post.createdAt)
                   .local()
                   .fromNow()}{' '}
-                | {post.numSeeds} seed
-                {post.numSeeds > 1 || post.numSeeds === 0 ? 's' : ''}
+                | {numSeeds} seed
+                {numSeeds > 1 || numSeeds === 0 ? 's' : ''}
               </Text>
             </PostMetadata>
             <SvgWrapper likedPost={isSeeded} onClick={onSeedClick}>
