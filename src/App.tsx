@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { navigate } from '@reach/router';
+import { navigate, RouteComponentProps } from '@reach/router';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { createGlobalStyle } from 'styled-components';
 import { useUserDispatch } from './contexts/UserContext';
-import { Routes } from './Routes';
-import { TopBar, TopBarBottomMargin } from './components/shared/TopBar';
+import { TopBar } from './components/shared/TopBar';
+import { BottomBar } from './components/shared/BottomBar';
 
 const GlobalStyle = createGlobalStyle`
   *, *::after, *::before {
@@ -22,10 +22,11 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     -webkit-tap-highlight-color: transparent;
     background-color: ${props => props.theme.colors.background};
+    overflow: hidden;
   }
 `;
 
-const App: React.FC = () => {
+export const App: React.FC<RouteComponentProps> = ({ children, location }) => {
   const dispatch = useUserDispatch();
 
   // we only have to try getting the user if they're in any other location except register
@@ -71,12 +72,12 @@ const App: React.FC = () => {
   return (
     <div>
       <GlobalStyle />
-      <header style={{ marginBottom: `${TopBarBottomMargin}rem` }}>
+      <header>
         <TopBar />
       </header>
-      <Routes />
+      {location?.pathname !== '/login' &&
+        location?.pathname !== '/register' && <BottomBar />}
+      {children}
     </div>
   );
 };
-
-export default App;
