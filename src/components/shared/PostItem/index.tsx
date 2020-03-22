@@ -50,6 +50,20 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
         userId: userState.userId,
         userProfile: userState.userProfile
       });
+
+    // send notification
+    if (userState.userId !== post.userId) {
+      const notifId = uuid();
+      await db
+        .doc(`users/${post.userId}`)
+        .collection('notifications')
+        .doc(notifId)
+        .set({
+          userId: userState.userId,
+          message: 'seeded your post.',
+          createdAt: new Date().toISOString()
+        });
+    }
   };
 
   const unseedPost = async () => {
