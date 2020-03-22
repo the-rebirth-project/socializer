@@ -11,6 +11,7 @@ interface LinkTextProps {
 export const LinkText = styled(Link)<LinkTextProps>`
   cursor: pointer;
   font-size: inherit;
+  font-weight: inherit;
   color: ${props =>
     props.highlight ? props.theme.colors.secondary : 'inherit'};
   font-family: inherit;
