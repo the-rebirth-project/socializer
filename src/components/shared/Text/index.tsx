@@ -1,21 +1,21 @@
 import React from 'react';
 import { Wrapper } from './styles';
 
-type TextProps = {
+interface TextProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: number;
   opacity?: number;
   weight?: number;
-};
+}
 
-export const Text: React.FC<TextProps> = ({
-  size,
-  opacity,
-  weight,
-  children
-}) => {
+export const Text: React.FC<TextProps> = props => {
   return (
-    <Wrapper size={size} opacity={opacity} weight={weight}>
-      {children}
+    <Wrapper
+      {...props}
+      size={props.size}
+      opacity={props.opacity}
+      weight={props.weight}
+    >
+      {props.children}
     </Wrapper>
   );
 };
