@@ -1,27 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { positions, Provider as AlertProvider } from 'react-alert';
+import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
 import firebase from 'firebase/app';
 import { ThemeProvider } from 'styled-components';
 import { UserContextProvider } from './contexts/UserContext';
 import * as serviceWorker from './serviceWorker';
 import { mainTheme } from './themes/mainTheme';
-import App from './App';
+import { Routes } from './Routes';
 
 const FBConfig = require('./config/index');
 firebase.initializeApp(FBConfig);
 
 const alertOptions = {
   timeout: 5000,
-  position: positions.BOTTOM_CENTER
+  position: positions.BOTTOM_CENTER,
+  transition: transitions.FADE,
+  offset: '6rem'
 };
 
 ReactDOM.render(
   <ThemeProvider theme={mainTheme}>
     <UserContextProvider>
       <AlertProvider template={AlertTemplate} {...alertOptions}>
-        <App />
+        <Routes />
       </AlertProvider>
     </UserContextProvider>
   </ThemeProvider>,
