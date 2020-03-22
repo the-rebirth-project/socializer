@@ -1,12 +1,13 @@
 import styled from 'styled-components';
+import { navbarHeight } from '../../../constants/navbarHeight';
 
 export const Wrapper = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 2;
-  width: 100vw;
-  height: 5rem;
+  z-index: 50;
+  width: 100%;
+  height: ${navbarHeight}rem;
   background-image: linear-gradient(
     to right,
     ${props => props.theme.colors.primary},
@@ -21,6 +22,8 @@ export const FlexContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0rem 1rem;
 `;
 
 export const TitleContainer = styled.div`

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text } from '../../shared/Text';
+import { Text } from '../Text';
 import { Wrapper, FlexContainer, TitleContainer } from './styles';
 
-export const Navbar: React.FC = () => {
+export const TopBar: React.FC = () => {
   return (
     <Wrapper>
       <FlexContainer>
@@ -15,5 +15,3 @@ export const Navbar: React.FC = () => {
     </Wrapper>
   );
 };
-
-export const NavbarBottomMargin = 8; // in rem
