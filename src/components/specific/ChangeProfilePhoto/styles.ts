@@ -12,6 +12,7 @@ type UploadButtonProps = {
   disabled?: boolean;
 };
 
+//! HAS TO BE A LABEL ELEMENT
 export const UploadButton = styled.label<UploadButtonProps>`
   border: 2px solid ${props => props.theme.colors.secondary};
   box-shadow: 0px 3px 6px ${props => props.theme.colors.secondary}40;
