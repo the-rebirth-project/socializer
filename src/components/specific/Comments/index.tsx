@@ -19,20 +19,21 @@ type CommentsProps = {
 export const Comments: React.FC<CommentsProps> = ({
   comments,
   postId,
-  numComments,
+  numComments: initialNumComments,
   postUserId
 }) => {
   const commentsState = useCommentsState();
   const commentsDispatch = useCommentsDispatch();
 
   useEffect(() => {
+    commentsDispatch({ type: 'SET_NUM_COMMENTS', payload: initialNumComments });
     commentsDispatch({ type: 'SET_COMMENTS', payload: comments });
-  }, [commentsDispatch, comments]);
+  }, [commentsDispatch, comments, initialNumComments]);
 
   return (
     <>
       <Text size={1.3} opacity={0.7}>
-        Comments ({numComments})
+        Comments ({commentsState.numComments})
       </Text>
 
       {commentsState.comments.length > 0 && (
