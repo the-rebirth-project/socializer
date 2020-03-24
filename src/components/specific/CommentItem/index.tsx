@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -9,6 +9,7 @@ import {
 } from '../../../contexts/RepliesContext';
 import { Replies } from '../Replies';
 import { Text } from '../../shared/Text';
+import { LinkText } from '../../shared/LinkText';
 import { CommentReplyWrapper } from '../../shared/CommentReplyWrapper';
 import { OpacityLoader } from '../../shared/OpacityLoader';
 import { Comment } from '../../../types';
@@ -34,6 +35,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const repliesState = useRepliesState();
   const commentsState = useCommentsState();
   const { postingComment } = commentsState;
+
+  useEffect(() => {
+    repliesDispatch({ type: 'SET_NUM_REPLIES', payload: comment.numReplies });
+  }, [repliesDispatch, comment.numReplies]);
 
   const onViewRepliesClick = async () => {
     // show/hide replies
@@ -93,7 +98,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         defaultOpacity={1}
       >
         <Text size={textSize} weight={700}>
-          {comment.userHandle}{' '}
+          <LinkText to={`/users/${comment.userHandle}`}>
+            {comment.userHandle}
+          </LinkText>
         </Text>
       </OpacityLoader>
 
@@ -113,14 +120,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           onClick={!repliesState.postingReply ? onViewRepliesClick : undefined}
         >
           {repliesState.showReplies
-            ? `Hide All Replies (${comment.numReplies})`
-            : `View All Replies (${comment.numReplies})`}{' '}
+            ? `Hide All Replies (${repliesState.numReplies})`
+            : `View All Replies (${repliesState.numReplies})`}{' '}
         </ClickableSpan>
       </Text>
 
       {/* Will only show when showReplies is true */}
       <Replies
         commentUserHandle={comment.userHandle}
+        commentUserId={comment.userId}
         postId={postId}
         commentId={comment.id}
         postUserId={postUserId}
