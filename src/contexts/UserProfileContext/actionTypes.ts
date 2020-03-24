@@ -1,6 +1,10 @@
 import { UserData } from '../../types/UserData';
 
-export type Action = SetUserProfile | SetFetchingData | SetIsSubscribed;
+export type Action =
+  | SetUserProfile
+  | SetFetchingData
+  | SetIsSubscribed
+  | SetAuthorizedToEdit;
 
 type SetUserProfile = {
   type: 'SET_USER_PROFILE';
@@ -14,5 +18,10 @@ type SetFetchingData = {
 
 type SetIsSubscribed = {
   type: 'SET_IS_SUBSCRIBED';
+  payload: boolean;
+};
+
+type SetAuthorizedToEdit = {
+  type: 'SET_AUTHORIZED_TO_EDIT';
   payload: boolean;
 };
