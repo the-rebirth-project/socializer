@@ -9,21 +9,11 @@ export const Wrapper = styled.section<WrapperProps>`
   column-gap: 1rem;
   align-items: center;
   min-height: 4rem;
-  padding: 1rem 2rem;
-  width: 100vw;
+  padding: 0rem 2rem;
+  width: 100%;
   position: relative;
-
-  ::after {
-    content: '';
-    display: block;
-    height: 1px;
-    width: 100vw;
-    background-color: ${props => props.theme.colors.textColor};
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    opacity: ${props => (props.lastNotif ? 0 : 0.3)};
-  }
+  justify-content: center;
+  justify-items: center;
 `;
 
 export const ContentWrapper = styled.div`

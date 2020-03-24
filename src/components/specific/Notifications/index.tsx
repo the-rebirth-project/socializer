@@ -8,7 +8,7 @@ import { NotificationItem } from '../NotificationItem';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { SubHeading } from '../../shared/SubHeading';
 import { Notification } from '../../../types/Notification';
-import { Wrapper } from './styles';
+import { Wrapper, NotificationsWrapper } from './styles';
 
 export const Notifications = () => {
   const db = firebase.firestore();
@@ -121,7 +121,7 @@ export const Notifications = () => {
       <Wrapper>
         <SubHeading>Notifications</SubHeading>
         {/* Last notification will get the ref */}
-        <main>
+        <NotificationsWrapper>
           {notifications.map((n, i) => {
             if (i === notifications.length - 1) {
               return (
@@ -133,7 +133,7 @@ export const Notifications = () => {
               return <NotificationItem key={n.id} notification={n} />;
             }
           })}
-        </main>
+        </NotificationsWrapper>
       </Wrapper>
       <LoadingSpinner loading={fetchingMoreNotifs ? 1 : 0} small />
     </LoadingSpinner>

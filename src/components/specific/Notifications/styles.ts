@@ -8,3 +8,11 @@ export const Wrapper = styled.div`
   row-gap: 4rem;
   justify-items: center;
 `;
+
+export const NotificationsWrapper = styled.main`
+  display: grid;
+  grid-template-rows: auto;
+  row-gap: 2rem;
+  justify-items: center;
+  justify-content: center;
+`;
