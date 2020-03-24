@@ -85,14 +85,26 @@ export const RegisterForm: React.FC = () => {
 
       await db
         .collection('users')
-        .doc(formValues.username)
+        .doc(userDetails.userId)
         .set(userDetails);
 
-      // immediately log out the user. wait until email is verified
-      await firebase.auth().signOut();
+      // add self as a subscriber
+      await db
+        .collection('users')
+        .doc(userDetails.userId)
+        .collection('subscribers')
+        .doc(userDetails.userId)
+        .set({
+          userId: userDetails.userId,
+          profileImageURL: userDetails.profileImageURL
+        });
+
       setVerifEmailSent(true);
+      alert.info('Sent verification email. Please check your inbox.');
+      // immediately sign out user
+      firebase.auth().signOut();
     } catch (err) {
-      throw new AuthError(err.code, 'Authentication failed');
+      throw new CustomError(err.code, 'Authentication failed');
     }
   };
 
