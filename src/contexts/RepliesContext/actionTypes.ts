@@ -5,14 +5,30 @@ export type Action =
   | AddReply
   | AddLocalReply
   | SetPostingReply
+  | SetNumReplies
   | SetFetchingReplies
+  | IncrementNumReplies
+  | DecrementNumReplies
   | SetFetchedReplies
   | ResetLocalReplies
   | ShowReplies;
 
 type SetReplies = {
   type: 'SET_REPLIES';
-  payload: Reply[];
+  payload: any[];
+};
+
+type SetNumReplies = {
+  type: 'SET_NUM_REPLIES';
+  payload: number;
+};
+
+type IncrementNumReplies = {
+  type: 'INCREMENT_NUM_REPLIES';
+};
+
+type DecrementNumReplies = {
+  type: 'DECREMENT_NUM_REPLIES';
 };
 
 type SetFetchedReplies = {
