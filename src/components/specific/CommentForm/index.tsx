@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import uuid from 'uuid/v4';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { useAlert } from 'react-alert';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   useCommentsDispatch,
@@ -29,6 +30,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
   postUserId
 }) => {
   const db = firebase.firestore();
+  const alert = useAlert();
 
   const [commentText, setCommentText] = useState('');
   const { userHandle, userId } = useUserState();
@@ -59,6 +61,10 @@ export const CommentForm: React.FC<CommentFormProps> = ({
       });
 
       commentsDispatch({
+        type: 'INCREMENT_NUM_COMMENTS'
+      });
+
+      commentsDispatch({
         type: 'SET_POSTING_COMMENT',
         payload: true
       });
@@ -69,9 +75,21 @@ export const CommentForm: React.FC<CommentFormProps> = ({
           .collection('comments')
           .doc(commentId)
           .set(newComment);
+
+        if (userId !== postUserId) {
+          const notifId = uuid();
+          await db
+            .doc(`users/${postUserId}`)
+            .collection('notifications')
+            .doc(notifId)
+            .set({
+              userId,
+              message: 'commented on your post.',
+              createdAt: new Date().toISOString()
+            });
+        }
       } catch (err) {
-        // TODO: Handle error
-        console.log(err);
+        alert.error(`We were unable to save your comment to the database :(`);
       }
 
       commentsDispatch({ type: 'SET_POSTING_COMMENT', payload: false });
