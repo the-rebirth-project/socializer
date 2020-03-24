@@ -27,3 +27,11 @@ type AddComment = {
   type: 'ADD_COMMENT';
   payload: Comment;
 };
+
+type IncrementNumComments = {
+  type: 'INCREMENT_NUM_COMMENTS';
+};
+
+type DecrementNumComments = {
+  type: 'DECREMENT_NUM_COMMENTS';
+};
