@@ -9,6 +9,24 @@ export const commentsReducer = (state: State, action: Action) => {
         comments: [...state.comments, action.payload]
       };
 
+    case 'SET_NUM_COMMENTS':
+      return {
+        ...state,
+        numComments: action.payload
+      };
+
+    case 'INCREMENT_NUM_COMMENTS':
+      return {
+        ...state,
+        numComments: state.numComments + 1
+      };
+
+    case 'DECREMENT_NUM_COMMENTS':
+      return {
+        ...state,
+        numComments: state.numComments - 1
+      };
+
     case 'SET_COMMENTS':
       return {
         ...state,
