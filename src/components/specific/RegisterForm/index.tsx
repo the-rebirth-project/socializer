@@ -164,6 +164,11 @@ export const RegisterForm: React.FC = () => {
     top: 0
   };
 
+  // if a user is signed in, they're automatically signed out on visit
+  useEffect(() => {
+    firebase.auth().signOut();
+  }, []);
+
   return (
     <Form
       onSubmit={onSubmit}
