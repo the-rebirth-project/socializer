@@ -8,16 +8,18 @@ import { Reply } from '../../../types';
 
 type RepliesProps = {
   commentUserHandle: string;
+  commentUserId: string;
   postId: string;
   commentId: string;
-  postUserHandle: string;
+  postUserId: string;
 };
 
 export const Replies: React.FC<RepliesProps> = ({
   commentUserHandle,
   postId,
   commentId,
-  postUserHandle
+  commentUserId,
+  postUserId
 }) => {
   const repliesState = useRepliesState();
 
@@ -27,7 +29,7 @@ export const Replies: React.FC<RepliesProps> = ({
         <ReplyItem
           key={uuid()}
           reply={reply}
-          isLastReply={replies.length - 1 === idx ? true : false}
+          isFirstReply={idx === 0 ? true : false}
         />
       ))}
     </RepliesContainer>
@@ -37,9 +39,10 @@ export const Replies: React.FC<RepliesProps> = ({
     <Wrapper>
       <ReplyForm
         commentUserHandle={commentUserHandle}
+        commentUserId={commentUserId}
         commentId={commentId}
         postId={postId}
-        postUserHandle={postUserHandle}
+        postUserId={postUserId}
       />
       {repliesState.showReplies && (
         <StyledLoadingSpinner
