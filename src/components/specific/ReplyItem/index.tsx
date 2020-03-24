@@ -4,22 +4,28 @@ import { useRepliesState } from '../../../contexts/RepliesContext';
 import { CommentReplyWrapper } from '../../shared/CommentReplyWrapper/';
 import { OpacityLoader } from '../../shared/OpacityLoader';
 import { Text } from '../../shared/Text';
+import { LinkText } from '../../shared/LinkText';
 import { regularTextSize } from '../../../constants';
 import { Reply } from '../../../types';
 
 type ReplyItemProps = {
   reply: Reply;
-  isLastReply: boolean;
+  isFirstReply: boolean;
 };
-export const ReplyItem: React.FC<ReplyItemProps> = ({ reply, isLastReply }) => {
-  const { fetchingReplies } = useRepliesState();
-  const loading = isLastReply && fetchingReplies;
+export const ReplyItem: React.FC<ReplyItemProps> = ({
+  reply,
+  isFirstReply
+}) => {
+  const { postingReply } = useRepliesState();
+  const loading = isFirstReply && postingReply;
 
   return (
     <CommentReplyWrapper>
       <OpacityLoader loading={loading ? 1 : 0} defaultOpacity={1}>
         <Text size={regularTextSize} weight={700}>
-          {reply.userHandle}{' '}
+          <LinkText to={`/users/${reply.userHandle}`}>
+            {reply.userHandle}
+          </LinkText>
         </Text>
       </OpacityLoader>
 
