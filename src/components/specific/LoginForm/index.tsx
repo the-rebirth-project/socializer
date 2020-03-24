@@ -161,95 +161,114 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
   };
 
   return (
-    <Form
-      onSubmit={onSubmit}
-      render={({ handleSubmit }) => (
-        <FormWrapper onSubmit={handleSubmit}>
-          <Field
-            name='email'
-            validate={required}
-            render={({ input, meta }) => (
-              <FormFieldGrid>
-                <FieldLabel
-                  margin={fieldLabelMargins}
-                  hasError={meta.error && meta.touched}
-                >
-                  Email
-                  {meta.error && meta.touched && (
-                    <ErrorMessage> | {meta.error}</ErrorMessage>
-                  )}
-                </FieldLabel>
-                <TextInput
-                  {...input}
-                  type='email'
-                  autoComplete='off'
-                  placeholder='Enter your email'
-                  hasError={meta.error && meta.touched}
-                />
-              </FormFieldGrid>
+    <LoadingSpinner
+      loading={reauthenticate && userState.fetchingUser ? 1 : 0}
+      centerSpinner
+    >
+      <Form
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        render={({ handleSubmit }) => (
+          <FormWrapper onSubmit={handleSubmit}>
+            <Field
+              name='email'
+              initialValue={userState.email}
+              validate={required}
+              render={({ input, meta }) => (
+                <FormFieldGrid>
+                  <FieldLabel
+                    margin={fieldLabelMargins}
+                    hasError={meta.error && meta.touched}
+                  >
+                    Email
+                    {meta.error && meta.touched && (
+                      <ErrorMessage> | {meta.error}</ErrorMessage>
+                    )}
+                  </FieldLabel>
+                  <TextInput
+                    {...input}
+                    type='email'
+                    autoComplete='off'
+                    placeholder='Enter your email'
+                    hasError={meta.error && meta.touched}
+                  />
+                </FormFieldGrid>
+              )}
+            />
+
+            <Field
+              name='password'
+              validate={required}
+              render={({ input, meta }) => (
+                <FormFieldGrid>
+                  <FieldLabel
+                    margin={fieldLabelMargins}
+                    hasError={meta.error && meta.touched}
+                  >
+                    Password
+                    {meta.error && meta.touched && (
+                      <ErrorMessage> | {meta.error}</ErrorMessage>
+                    )}
+                  </FieldLabel>
+                  <TextInput
+                    {...input}
+                    type='password'
+                    autoComplete='off'
+                    placeholder='Enter your password'
+                    hasError={meta.error && meta.touched}
+                  />
+                </FormFieldGrid>
+              )}
+            />
+
+            {!reauthenticate && (
+              <Field
+                name='stayLoggedIn'
+                type='checkbox'
+                render={({ input, meta }) => (
+                  <CheckboxFieldGrid>
+                    <CheckboxInput
+                      {...input}
+                      type='checkbox'
+                      checked={stayLoggedIn}
+                      onClick={() => setStayLoggedIn(!stayLoggedIn)}
+                    />
+                    <FieldLabel margin={fieldLabelMargins}>
+                      <SmallText>Stay logged in</SmallText>
+                    </FieldLabel>
+                  </CheckboxFieldGrid>
+                )}
+              />
             )}
-          />
 
-          <Field
-            name='password'
-            validate={required}
-            render={({ input, meta }) => (
-              <FormFieldGrid>
-                <FieldLabel
-                  margin={fieldLabelMargins}
-                  hasError={meta.error && meta.touched}
-                >
-                  Password
-                  {meta.error && meta.touched && (
-                    <ErrorMessage> | {meta.error}</ErrorMessage>
-                  )}
-                </FieldLabel>
-                <TextInput
-                  {...input}
-                  type='password'
-                  autoComplete='off'
-                  placeholder='Enter your password'
-                  hasError={meta.error && meta.touched}
-                />
-              </FormFieldGrid>
-            )}
-          />
+            <MetaTextContainer>
+              <ErrorMessage>{submitError}</ErrorMessage>
+            </MetaTextContainer>
 
-          <Field
-            name='stayLoggedIn'
-            type='checkbox'
-            render={({ input, meta }) => (
-              <CheckboxFieldGrid>
-                <CheckboxInput
-                  {...input}
-                  type='checkbox'
-                  checked={stayLoggedIn}
-                  onClick={() => setStayLoggedIn(!stayLoggedIn)}
-                />
-                <FieldLabel margin={fieldLabelMargins}>
-                  <SmallText>Stay logged in</SmallText>
-                </FieldLabel>
-              </CheckboxFieldGrid>
-            )}
-          />
+            <ButtonContainer>
+              <FancyButton onClick={handleSubmit}>
+                {reauthenticate
+                  ? !signingIn && 'Reauthenticate'
+                  : !signingIn && 'Sign In'}{' '}
+                <TextLoader loading={signingIn}>Authenticating...</TextLoader>
+              </FancyButton>
 
-          <MetaTextContainer>
-            <ErrorMessage>{submitError}</ErrorMessage>
-          </MetaTextContainer>
-
-          <ButtonContainer>
-            <FancyButton onClick={handleSubmit}>
-              {!signingIn && 'Sign In'}{' '}
-              <TextLoader loading={signingIn}>Authenticating...</TextLoader>
-            </FancyButton>
-            <SmallText>
-              Don't have an account? Click{' '}
-              <LinkText to='/register'>here</LinkText> to sign up{' '}
-              <LinkText to='/forgot-password'>Forgot Password?</LinkText>
-            </SmallText>
-          </ButtonContainer>
-        </FormWrapper>
-      )}
-    />
+              {!reauthenticate && (
+                <SmallText>
+                  Don't have an account? Click{' '}
+                  <LinkText to='/register' highlight>
+                    here
+                  </LinkText>{' '}
+                  to sign up{' '}
+                  <LinkText to='/forgot-password' highlight>
+                    Forgot Password?
+                  </LinkText>
+                </SmallText>
+              )}
+            </ButtonContainer>
+          </FormWrapper>
+        )}
+      />
+    </LoadingSpinner>
   );
 };
