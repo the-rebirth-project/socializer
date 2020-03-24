@@ -266,7 +266,10 @@ export const RegisterForm: React.FC = () => {
                 <CheckboxInput {...input} type='checkbox' />
                 <FieldLabel margin={fieldLabelMargins}>
                   <Text size={1.2}>
-                    Accept <LinkText to=''>Terms and Conditions</LinkText>
+                    Accept{' '}
+                    <LinkText to='' highlight>
+                      Terms and Conditions
+                    </LinkText>
                   </Text>
                 </FieldLabel>
               </CheckboxFieldGrid>
@@ -288,7 +291,10 @@ export const RegisterForm: React.FC = () => {
 
             <Text size={1.2}>
               Already have an account? Click{' '}
-              <LinkText to='/login'>here</LinkText> to sign in
+              <LinkText to='/login' highlight>
+                here
+              </LinkText>{' '}
+              to sign in
             </Text>
           </ButtonContainer>
         </FormWrapper>
