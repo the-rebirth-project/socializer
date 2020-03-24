@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { useAlert } from 'react-alert';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
-import { AuthError } from '../../../utils/AuthError';
+import { CustomError } from '../../../utils/CustomError';
 import { FieldLabel } from '../../shared/FieldLabel';
 import { TextInput } from '../../shared/TextInput';
 import { CheckboxInput } from '../../shared/CheckboxInput';
@@ -42,6 +43,7 @@ export const RegisterForm: React.FC = () => {
   const [signingUp, setSigningUp] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [verifEmailSent, setVerifEmailSent] = useState(false);
+  const alert = useAlert();
 
   const signUpUser = async (formValues: FormValues) => {
     try {
@@ -50,7 +52,7 @@ export const RegisterForm: React.FC = () => {
       // user already exists with the same userHandle
       const userDoc = await db.doc(`users/${formValues.username}`).get();
       if (userDoc.exists)
-        throw new AuthError(
+        throw new CustomError(
           'auth/username-already-taken',
           'Authentication Failed'
         );
