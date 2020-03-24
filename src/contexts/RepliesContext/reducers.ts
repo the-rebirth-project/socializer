@@ -15,6 +15,24 @@ export const repliesReducer = (state: State, action: Action) => {
         fetchedReplies: action.payload
       };
 
+    case 'SET_NUM_REPLIES':
+      return {
+        ...state,
+        numReplies: action.payload
+      };
+
+    case 'INCREMENT_NUM_REPLIES':
+      return {
+        ...state,
+        numReplies: state.numReplies + 1
+      };
+
+    case 'DECREMENT_NUM_REPLIES':
+      return {
+        ...state,
+        numReplies: state.numReplies - 1
+      };
+
     case 'SHOW_REPLIES':
       return {
         ...state,
