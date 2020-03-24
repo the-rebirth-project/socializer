@@ -6,8 +6,18 @@ export const userReducer = (state: State, action: Action) => {
     case 'SET_USER':
       return {
         ...state,
+        email: action.payload.email,
+        userId: action.payload.userId,
         userHandle: action.payload.userHandle,
-        userProfile: action.payload.userProfile
+        userProfile: action.payload.userProfile,
+        bio: action.payload.bio,
+        location: action.payload.location
+      };
+
+    case 'CHANGE_PROFILE_PHOTO':
+      return {
+        ...state,
+        userProfile: action.payload
       };
 
     case 'SET_FETCHING_USER':
