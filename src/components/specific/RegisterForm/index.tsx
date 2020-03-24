@@ -116,6 +116,7 @@ export const RegisterForm: React.FC = () => {
       await signUpUser(values);
       setSigningUp(false);
     } catch (err) {
+      alert.error('Failed to register account');
       /**
        * - POSSIBLE ERRORS
        * auth/email-already-in-use
