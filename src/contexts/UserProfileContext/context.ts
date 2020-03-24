@@ -11,10 +11,12 @@ export type State = {
   userData: UserData;
   fetchingData: boolean;
   isSubscribed: boolean;
+  authorizedToEdit: boolean;
 };
 
 export const initialState: State = {
   userData: {
+    userId: '',
     userHandle: '',
     profileImageURL: '',
     bio: '',
@@ -24,7 +26,8 @@ export const initialState: State = {
     numSeeds: 0
   },
   fetchingData: false,
-  isSubscribed: false
+  isSubscribed: false,
+  authorizedToEdit: false
 };
 
 export const UserProfileStateContext = React.createContext<State | undefined>(
