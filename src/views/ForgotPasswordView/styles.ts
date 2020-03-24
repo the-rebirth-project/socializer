@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-export const Wrapper = styled.main`
+export const Wrapper = styled.div`
   display: grid;
   grid-template-rows: auto;
   row-gap: 4rem;
-  padding: 6.5rem 0rem;
   justify-content: center;
+  justify-items: center;
 `;
