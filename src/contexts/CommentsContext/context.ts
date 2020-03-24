@@ -5,12 +5,14 @@ import { Comment } from '../../types';
 type Dispatch = (action: Action) => void;
 export type State = {
   comments: Comment[];
+  numComments: number;
   showReplies: boolean;
   postingComment: boolean;
 };
 
 export const initialState: State = {
   comments: [],
+  numComments: 0,
   showReplies: false,
   postingComment: false
 };
