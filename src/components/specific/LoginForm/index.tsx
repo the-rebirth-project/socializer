@@ -95,10 +95,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
     try {
       if (reauthenticate) {
         await reauthenticateUser(values);
-        alert.success('Successfully reauthenticated');
+        alert.success('Successfully reauthenticated!');
         navigate('/account/edit');
       } else {
         await signInUser(values);
+        alert.success('Successfully signed in!');
         navigate('/home');
       }
     } catch (err) {
@@ -111,6 +112,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
        * auth/email-not-verified
        * server/unavailable
        */
+      // reset alerts
+      alert.removeAll();
       alert.error('Authentication failed');
 
       switch (err.code) {
