@@ -77,7 +77,7 @@ export const RegisterForm: React.FC = () => {
         website: '',
         numPosts: 0,
         numSeeds: 0,
-        numConnects: 0,
+        numSubscribers: 0,
         profileImageURL: defaultPhotoUrl,
         createdAt: new Date().toISOString(),
         userId: credentials.user?.uid
