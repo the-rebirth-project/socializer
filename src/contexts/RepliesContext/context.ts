@@ -6,6 +6,7 @@ type Dispatch = (action: Action) => void;
 export type State = {
   replies: Reply[];
   localReplies: Reply[];
+  numReplies: number;
   fetchingReplies: boolean;
   // we only need to fetch it replies from db once. afterwards we cache it in state
   fetchedReplies: boolean;
@@ -16,6 +17,7 @@ export type State = {
 export const initialState: State = {
   replies: [],
   localReplies: [],
+  numReplies: 0,
   fetchingReplies: false,
   showReplies: false,
   fetchedReplies: false,
