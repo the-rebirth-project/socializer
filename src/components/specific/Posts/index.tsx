@@ -200,11 +200,13 @@ export const Posts: React.FC = () => {
             );
           }
         })}
+        <div style={{ justifySelf: 'center' }}>
+          <LoadingSpinner
+            loading={fetchingMorePosts ? 1 : 0}
+            small
+          ></LoadingSpinner>
+        </div>
       </Wrapper>
-      <LoadingSpinner
-        loading={fetchingMorePosts ? 1 : 0}
-        small
-      ></LoadingSpinner>
     </LoadingSpinner>
   );
 };
