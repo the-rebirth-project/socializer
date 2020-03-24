@@ -8,6 +8,7 @@ import {
   usePostsState
 } from '../../../contexts/PostsContext';
 import { GradientBox } from '../../shared/GradientBox';
+import { LinkText } from '../../shared/LinkText';
 import { CircleAvatar } from '../../shared/CircleAvatar';
 import { FancyButton } from '../../shared/FancyButton';
 import { OpacityLoader } from '../../shared/OpacityLoader';
@@ -72,11 +73,6 @@ export const PostAdd: React.FC = () => {
           .collection(`users/${userState.userId}/posts`)
           .doc(postId)
           .set(newPost);
-        // also add to feed
-        await db
-          .collection(`users/${userState.userId}/feed`)
-          .doc(postId)
-          .set(newPost);
       } catch (err) {
         // TODO: Handle error
         console.log(err);
@@ -96,7 +92,9 @@ export const PostAdd: React.FC = () => {
           <CircleAvatar imgUrl={userState.userProfile} />
           <UsernameContainer>
             <Text size={1.6} weight={700}>
-              {userState.userHandle}
+              <LinkText to={`/users/${userState.userHandle}`}>
+                {userState.userHandle}
+              </LinkText>
             </Text>
           </UsernameContainer>
         </UserHeader>
