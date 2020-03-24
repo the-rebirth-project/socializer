@@ -2,64 +2,67 @@ import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import { useAlert } from 'react-alert';
 import { navigate, RouteComponentProps } from '@reach/router';
 import { useUserState } from '../../contexts/UserContext';
 import { EditProfileForm } from '../../components/specific/EditProfileForm';
+import { ChangeProfilePhoto } from '../../components/specific/ChangeProfilePhoto';
 import { LoadingSpinner } from '../../components/shared/LoadingSpinner';
 import { TextLoader } from '../../components/shared/TextLoader';
 import { SubHeading } from '../../components/shared/SubHeading';
-import { Wrapper, ActionsAndFormWrapper, SeriousFancyButton } from './styles';
+import { SecondaryButton } from '../../components/shared/SecondaryButton';
+import { Page } from '../../components/shared/Page';
+import { Wrapper, ActionsAndFormWrapper } from './styles';
 
 export const EditProfileView: React.FC<RouteComponentProps> = () => {
   const db = firebase.firestore();
   const { fetchingUser, userId } = useUserState();
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const alert = useAlert();
 
   const deleteAccount = async () => {
-    try {
-      setDeletingAccount(true);
-      await db
-        .collection('users')
-        .doc(userId)
-        .delete();
-      // delete the user from firebase auth
-      firebase.auth().onAuthStateChanged(async user => {
-        if (user) {
-          try {
-            await user.delete();
-          } catch (err) {
-            if (err.code === 'auth/requires-recent-login') {
-              navigate('/reauthenticate');
-            }
-          }
-        } else {
+    firebase.auth().onAuthStateChanged(async user => {
+      if (user) {
+        setDeletingAccount(true);
+        try {
+          const userIdToDelete = userId;
+          await db
+            .collection('users')
+            .doc(userIdToDelete)
+            .delete();
+          await user.delete();
+          alert.success('Successfully deleted account');
           navigate('/login');
+        } catch (err) {
+          if (err.code === 'auth/requires-recent-login') {
+            alert.info('Please reauthenticate your account to proceed');
+            navigate('/reauthenticate');
+          } else {
+            alert.error(`Couldn't delete your account`);
+          }
         }
-      });
-
-      navigate('/login');
-    } catch (err) {
-      // TODO: Handle error
-      console.log(err);
-    }
+      } else {
+        navigate('/login');
+      }
+    });
     setDeletingAccount(false);
   };
 
   return (
     <LoadingSpinner loading={fetchingUser ? 1 : 0} centerSpinner>
-      <Wrapper>
-        <SubHeading>Edit Profile</SubHeading>
-        <ActionsAndFormWrapper>
-          <EditProfileForm />
-          <SeriousFancyButton onClick={deleteAccount}>
-            {!deletingAccount ? (
-              'Delete Account'
-            ) : (
+      <Page>
+        <Wrapper>
+          <SubHeading>Edit Profile</SubHeading>
+          <ActionsAndFormWrapper>
+            <ChangeProfilePhoto />
+            <EditProfileForm />
+            <SecondaryButton onClick={deleteAccount} serious>
+              {!deletingAccount && 'Delete'}
               <TextLoader loading={deletingAccount}>Deleting...</TextLoader>
-            )}
-          </SeriousFancyButton>
-        </ActionsAndFormWrapper>
-      </Wrapper>
+            </SecondaryButton>
+          </ActionsAndFormWrapper>
+        </Wrapper>
+      </Page>
     </LoadingSpinner>
   );
 };
