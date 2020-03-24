@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { useAlert } from 'react-alert';
 import { useUserState } from '../../../contexts/UserContext';
 import { useUserProfileState } from '../../../contexts/UserProfileContext';
 import {
@@ -15,6 +16,7 @@ import { Wrapper } from './styles';
 
 export const UserPosts: React.FC = () => {
   const db = firebase.firestore();
+  const alert = useAlert();
   const isMounted = useMounted();
   const userState = useUserState();
   const postsState = usePostsState();
@@ -107,8 +109,7 @@ export const UserPosts: React.FC = () => {
           setLastVisiblePost(snap.docs[snap.docs.length - 1]);
         await mapToPosts(snap.docs);
       } catch (err) {
-        // TODO: Handle error
-        console.log(err);
+        alert.error(`Couldn't fetch posts`);
       }
       isMounted.current &&
         postsDispatch({ type: 'SET_FETCHING_POSTS', payload: false });
@@ -128,21 +129,25 @@ export const UserPosts: React.FC = () => {
       if (observer.current) observer.current?.disconnect();
       observer.current = new IntersectionObserver(async entries => {
         if (entries[0].isIntersecting && !maxPostsFetched && lastVisiblePost) {
-          isMounted.current && setFetchingMorePosts(true);
-          const snap = await db
-            .doc(`users/${userData.userId}`)
-            .collection('posts')
-            .orderBy('createdAt', 'desc')
-            .startAfter(lastVisiblePost)
-            .limit(15)
-            .get();
+          try {
+            isMounted.current && setFetchingMorePosts(true);
+            const snap = await db
+              .doc(`users/${userData.userId}`)
+              .collection('posts')
+              .orderBy('createdAt', 'desc')
+              .startAfter(lastVisiblePost)
+              .limit(15)
+              .get();
 
-          if (snap.docs.length > 0) {
-            isMounted.current &&
-              setLastVisiblePost(snap.docs[snap.docs.length - 1]);
-            await mapToPosts(snap.docs);
-          } else {
-            isMounted.current && setMaxPostsFetched(true);
+            if (snap.docs.length > 0) {
+              isMounted.current &&
+                setLastVisiblePost(snap.docs[snap.docs.length - 1]);
+              await mapToPosts(snap.docs);
+            } else {
+              isMounted.current && setMaxPostsFetched(true);
+            }
+          } catch (err) {
+            alert.error(`Couldn't fetch more posts`);
           }
 
           isMounted.current && setFetchingMorePosts(false);
@@ -153,6 +158,7 @@ export const UserPosts: React.FC = () => {
     },
     [
       db,
+      alert,
       fetchingMorePosts,
       lastVisiblePost,
       maxPostsFetched,
