@@ -8,6 +8,7 @@ import { Form, Field } from 'react-final-form';
 import { useUserState, useUserDispatch } from '../../../contexts/UserContext';
 import { TextLoader } from '../../shared/TextLoader';
 import { TextInput } from '../../shared/TextInput';
+import { SecondaryButton } from '../../shared/SecondaryButton';
 import { FieldLabel } from '../../shared/FieldLabel';
 import {
   FormFieldGrid,
@@ -21,12 +22,7 @@ import {
   noWhitespace,
   composeValidators
 } from '../../../utils/formValidators';
-import {
-  FormWrapper,
-  TextArea,
-  StyledFancyButton,
-  ButtonContainer
-} from './styles';
+import { FormWrapper, TextArea, ButtonContainer } from './styles';
 import { CustomError } from '../../../utils';
 
 type FormValues = {
@@ -96,6 +92,7 @@ export const EditProfileForm: React.FC = () => {
         }
       });
 
+      alert.removeAll();
       alert.success('Successfully updated profile details');
     } catch (err) {
       switch (err.code) {
@@ -181,10 +178,13 @@ export const EditProfileForm: React.FC = () => {
 
           <Field
             name='location'
-            validate={required}
+            validate={composeValidators(required, maxChar(32))}
             render={({ input, meta }) => (
               <FormFieldGrid>
-                <FieldLabel margin={fieldLabelMargins}>
+                <FieldLabel
+                  margin={fieldLabelMargins}
+                  hasError={meta.error && meta.touched}
+                >
                   Location
                   {meta.error && meta.touched && (
                     <ErrorMessage> | {meta.error}</ErrorMessage>
@@ -209,7 +209,7 @@ export const EditProfileForm: React.FC = () => {
           )}
 
           <ButtonContainer>
-            <StyledFancyButton
+            <SecondaryButton
               onClick={handleSubmit}
               disabled={
                 (values.username === userState.userHandle &&
@@ -223,7 +223,7 @@ export const EditProfileForm: React.FC = () => {
               ) : (
                 <TextLoader loading={isSaving}>Saving...</TextLoader>
               )}
-            </StyledFancyButton>
+            </SecondaryButton>
           </ButtonContainer>
         </FormWrapper>
       )}
