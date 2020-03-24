@@ -5,14 +5,22 @@ import { Action } from './actionTypes';
 
 type Dispatch = (action: Action) => void;
 export type State = {
+  email: string;
+  userId: string;
   userHandle: string;
   userProfile: string;
+  bio: string;
+  location: string;
   fetchingUser: boolean;
 };
 
 export const initialState: State = {
+  email: '',
+  userId: '',
   userHandle: '',
   userProfile: '',
+  bio: '',
+  location: '',
   fetchingUser: false
 };
 
