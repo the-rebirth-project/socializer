@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { navbarHeight } from '../../../constants/navbarHeight';
 
 export const Wrapper = styled.div`
   display: grid;
@@ -7,5 +8,5 @@ export const Wrapper = styled.div`
   row-gap: 2rem;
   width: 90%;
   margin: 0 auto;
-  margin-bottom: 2rem;
+  margin-top: -${navbarHeight}rem;
 `;
