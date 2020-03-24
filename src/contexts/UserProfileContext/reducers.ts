@@ -21,6 +21,12 @@ export const userProfileReducer = (state: State, action: Action) => {
         isSubscribed: action.payload
       };
 
+    case 'SET_AUTHORIZED_TO_EDIT':
+      return {
+        ...state,
+        authorizedToEdit: action.payload
+      };
+
     default:
       throw new Error('Unhandled action type in UserProfileProvider');
   }
