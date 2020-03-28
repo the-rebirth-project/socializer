@@ -17,7 +17,7 @@ export const BottomBar: React.FC = () => {
       <NavLink to='/home'>
         <NavIcon icon={faHome} />
       </NavLink>
-      <NavLink to='/search'>
+      <NavLink to='/explore'>
         <NavIcon icon={faSearch} />
       </NavLink>
       <NavLink to='/notifications'>
