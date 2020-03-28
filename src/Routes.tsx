@@ -4,6 +4,7 @@ import { App } from './App';
 import { RedirectView } from './views/RedirectView';
 import { LoginView } from './views/LoginView';
 import { RegisterView } from './views/RegisterView';
+import { ExploreView } from './views/ExploreView';
 import { ForgotPasswordView } from './views/ForgotPasswordView';
 import { HomeView } from './views/HomeView';
 import { UserView } from './views/UserView';
@@ -19,6 +20,7 @@ export const Routes: React.FC = () => {
         <LoginView path='login' />
         <LoginView path='reauthenticate' />
         <RegisterView path='register' />
+        <ExploreView path='explore' />
         <ForgotPasswordView path='forgot-password' />
         <UserView path='users/:userHandle' />
         <EditProfileView path='account/edit' />
