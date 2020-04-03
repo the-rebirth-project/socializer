@@ -1,6 +1,6 @@
-import React from 'react';
-
 declare module 'react-alert' {
+  import React from 'react';
+
   export type AlertPosition =
     | 'top left'
     | 'top center'
