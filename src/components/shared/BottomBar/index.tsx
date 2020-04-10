@@ -4,10 +4,11 @@ import {
   faHome,
   faUser,
   faSearch,
-  faBell
+  faBell,
 } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from '../NavLink';
-import { Wrapper, NavIcon } from './styles';
+import { NavIcon } from '../NavIcon';
+import { Wrapper } from './styles';
 
 export const BottomBar: React.FC = () => {
   const { userHandle } = useUserState();
