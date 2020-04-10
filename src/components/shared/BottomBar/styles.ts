@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { navbarHeight } from '../../../constants/navbarHeight';
 import { device } from '../../../utils/responsive';
 
@@ -13,20 +12,12 @@ export const Wrapper = styled.nav`
   justify-content: space-between;
   align-items: center;
   height: ${navbarHeight}rem;
-  background-color: ${props => props.theme.colors.background};
-  box-shadow: 0px -5px 9px ${props => props.theme.colors.background}40;
+  background-color: ${(props) => props.theme.colors.background};
+  box-shadow: 0px -5px 9px ${(props) => props.theme.colors.background}40;
   padding: 0rem 2rem;
-  transform: translateY(0%);
   transition: all 0.3s ease-in-out;
 
   @media ${device.tablet} {
-    transform: translateY(100%);
+    display: none;
   }
-`;
-
-export const NavIcon = styled(FontAwesomeIcon)`
-  font-size: 2.5rem;
-  opacity: inherit;
-  transition: all 0.2s ease-in-out;
-  color: ${props => props.theme.colors.textColor};
 `;
