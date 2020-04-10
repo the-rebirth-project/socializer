@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { Link } from '@reach/router';
 
-interface LinkTextProps {
+type LinkTextProps = {
   /**
    * Indicates whether or not the link should be highlighted in blue
    */
   highlight?: boolean;
-}
+};
 
 export const LinkText = styled(Link)<LinkTextProps>`
   cursor: pointer;
