@@ -23,7 +23,7 @@ import {
   ProfilePictureContainer,
   PostBody,
   ParagraphText,
-  SvgWrapper
+  SvgWrapper,
 } from './styles';
 import { LinkText } from '../LinkText';
 
@@ -48,7 +48,7 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
       .doc(userState.userId)
       .set({
         userId: userState.userId,
-        userProfile: userState.userProfile
+        userProfile: userState.userProfile,
       });
 
     // send notification
@@ -61,7 +61,7 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
         .set({
           userId: userState.userId,
           message: 'seeded your post.',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
     }
   };
@@ -108,11 +108,8 @@ export const PostItem: React.FC<PostItemProps> = ({ post, isAddingPost }) => {
               </UsernameContainer>
 
               <Text size={1.2} opacity={0.8}>
-                posted{' '}
-                {moment(post.createdAt)
-                  .local()
-                  .fromNow()}{' '}
-                | {numSeeds} seed
+                posted {moment(post.createdAt).local().fromNow()} | {numSeeds}{' '}
+                seed
                 {numSeeds > 1 || numSeeds === 0 ? 's' : ''}
               </Text>
             </PostMetadata>

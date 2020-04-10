@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 
-type WrapperProps = {
-  lastNotif?: boolean;
-};
-export const Wrapper = styled.section<WrapperProps>`
+export const Wrapper = styled.section`
   display: grid;
   grid-template-columns: min-content 1fr;
   column-gap: 1rem;

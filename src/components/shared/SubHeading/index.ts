@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { device } from '../../../utils/responsive';
 
 export const SubHeading = styled.h3`
   font-size: 2.3rem;
@@ -6,7 +7,7 @@ export const SubHeading = styled.h3`
   width: fit-content;
   text-align: center;
   text-transform: uppercase;
-  color: ${props => props.theme.colors.textColor};
+  color: ${(props) => props.theme.colors.textColor};
 
   ::after {
     content: '';
@@ -16,8 +17,12 @@ export const SubHeading = styled.h3`
     margin: 0.5rem auto;
     background-image: linear-gradient(
       to right,
-      ${props => props.theme.colors.primary},
-      ${props => props.theme.colors.secondary}
+      ${(props) => props.theme.colors.primary},
+      ${(props) => props.theme.colors.secondary}
     );
+  }
+
+  @media ${device.laptop} {
+    font-size: 2.7rem;
   }
 `;

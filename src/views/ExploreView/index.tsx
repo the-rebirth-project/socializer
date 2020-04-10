@@ -24,11 +24,11 @@ export const ExploreView: React.FC<RouteComponentProps> = () => {
         .limit(30)
         .get();
 
-      const usersData: User[] = usersCollection.docs.map(d => {
+      const usersData: User[] = usersCollection.docs.map((d) => {
         return {
           userId: d.id,
           userHandle: d.data().userHandle,
-          profileImageURL: d.data().profileImageURL
+          profileImageURL: d.data().profileImageURL,
         };
       });
 

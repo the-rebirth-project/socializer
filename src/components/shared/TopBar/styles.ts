@@ -10,11 +10,11 @@ export const Wrapper = styled.nav`
   height: ${navbarHeight}rem;
   background-image: linear-gradient(
     to right,
-    ${props => props.theme.colors.primary},
-    ${props => props.theme.colors.secondary}
+    ${(props) => props.theme.colors.primary},
+    ${(props) => props.theme.colors.secondary}
   );
 
-  box-shadow: 0px 3px 6px ${props => props.theme.colors.primary}40;
+  box-shadow: 0px 3px 6px ${(props) => props.theme.colors.primary}40;
 `;
 
 export const FlexContainer = styled.div`
@@ -23,9 +23,12 @@ export const FlexContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0rem 1rem;
+  padding: 0rem 2rem;
 `;
 
 export const TitleContainer = styled.div`
-  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;

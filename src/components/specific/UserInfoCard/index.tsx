@@ -7,7 +7,7 @@ import { useAlert } from 'react-alert';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   useUserProfileState,
-  useUserProfileDispatch
+  useUserProfileDispatch,
 } from '../../../contexts/UserProfileContext';
 import { useMounted } from '../../../hooks/useMounted';
 import { CircleAvatar } from '../../shared/CircleAvatar';
@@ -21,8 +21,9 @@ import {
   UserBio,
   ActionButtonContainer,
   SubscribeButtonContainer,
-  StyledSecondaryButton
+  StyledSecondaryButton,
 } from './styles';
+import uuid from 'uuid';
 
 export const UserInfoCard: React.FC = () => {
   const db = firebase.firestore();
@@ -59,7 +60,19 @@ export const UserInfoCard: React.FC = () => {
           .doc(userState.userId)
           .set({
             userId: userState.userId,
-            profileImageURL: userState.userProfile
+            profileImageURL: userState.userProfile,
+          });
+
+        // send notification
+        await db
+          .collection('users')
+          .doc(userData.userId)
+          .collection('notifications')
+          .doc(uuid())
+          .set({
+            userId: userState.userId,
+            message: 'subscribed to you.',
+            createdAt: new Date().toISOString(),
           });
 
         isMounted.current &&

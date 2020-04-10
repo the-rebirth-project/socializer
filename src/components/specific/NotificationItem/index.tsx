@@ -8,15 +8,13 @@ import { Wrapper, ContentWrapper } from './styles';
 
 type NotificationItemProps = {
   notification: Notification;
-  lastNotif?: boolean;
 };
 
 export const NotificationItem: React.FC<NotificationItemProps> = ({
-  notification,
-  lastNotif
+  notification
 }) => {
   return (
-    <Wrapper lastNotif={lastNotif}>
+    <Wrapper>
       <CircleAvatar imgUrl={notification.userProfile} />
       <ContentWrapper>
         <Text size={1.6} weight={400}>

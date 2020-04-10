@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import uuid from 'uuid/v4';
 import { useAlert } from 'react-alert';
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
@@ -17,7 +18,7 @@ import {
   FormFieldGrid,
   ErrorMessage,
   MetaTextContainer,
-  CheckboxFieldGrid
+  CheckboxFieldGrid,
 } from '../../shared/FormStyles';
 import {
   composeValidators,
@@ -26,7 +27,7 @@ import {
   passwordValidator,
   emailValidator,
   minChar,
-  maxChar
+  maxChar,
 } from '../../../utils/formValidators';
 import { FormWrapper, ButtonContainer } from './styles';
 
@@ -63,7 +64,7 @@ export const RegisterForm: React.FC = () => {
 
       credentials.user?.updateProfile({
         displayName: formValues.username,
-        photoURL: defaultPhotoUrl
+        photoURL: defaultPhotoUrl,
       });
 
       // send email verification link
@@ -80,13 +81,10 @@ export const RegisterForm: React.FC = () => {
         numSubscribers: 0,
         profileImageURL: defaultPhotoUrl,
         createdAt: new Date().toISOString(),
-        userId: credentials.user?.uid
+        userId: credentials.user?.uid,
       };
 
-      await db
-        .collection('users')
-        .doc(userDetails.userId)
-        .set(userDetails);
+      await db.collection('users').doc(userDetails.userId).set(userDetails);
 
       // add self as a subscriber
       await db
@@ -96,7 +94,19 @@ export const RegisterForm: React.FC = () => {
         .doc(userDetails.userId)
         .set({
           userId: userDetails.userId,
-          profileImageURL: userDetails.profileImageURL
+          profileImageURL: userDetails.profileImageURL,
+        });
+
+      // first notification
+      await db
+        .collection('users')
+        .doc(userDetails.userId)
+        .collection('notifications')
+        .doc(uuid())
+        .set({
+          userId: userDetails.userId,
+          message: 'joined Socializer.',
+          createdAt: new Date().toISOString(),
         });
 
       setVerifEmailSent(true);
@@ -161,7 +171,7 @@ export const RegisterForm: React.FC = () => {
     left: 1,
     right: 0,
     bottom: 0,
-    top: 0
+    top: 0,
   };
 
   // if a user is signed in, they're automatically signed out on visit

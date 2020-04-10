@@ -4,14 +4,13 @@ import 'firebase/firestore';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   useUserProfileState,
-  useUserProfileDispatch
+  useUserProfileDispatch,
 } from '../../../contexts/UserProfileContext';
 import { UserInfoCard } from '../UserInfoCard';
 import { UserPosts } from '../UserPosts';
 import { useMounted } from '../../../hooks/useMounted';
 import { Text } from '../../shared/Text';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
-import { SubHeading } from '../../shared/SubHeading';
 import { Center } from '../../shared/Center';
 import { UserData } from '../../../types';
 import { Wrapper } from './styles';
@@ -49,7 +48,7 @@ export const UserInfo: React.FC<UserInfoProps> = ({ userHandle }) => {
           numSubscribers: data?.numSubscribers - 1,
           numPosts: data?.numPosts,
           location: data?.location,
-          profileImageURL: data?.profileImageURL
+          profileImageURL: data?.profileImageURL,
         };
         isMounted.current &&
           userProfileDispatch({ type: 'SET_USER_PROFILE', payload: user });
@@ -60,7 +59,7 @@ export const UserInfo: React.FC<UserInfoProps> = ({ userHandle }) => {
             isMounted.current &&
               userProfileDispatch({
                 type: 'SET_AUTHORIZED_TO_EDIT',
-                payload: true
+                payload: true,
               });
 
           const subscriberDoc = await db
@@ -73,7 +72,7 @@ export const UserInfo: React.FC<UserInfoProps> = ({ userHandle }) => {
           isMounted.current &&
             userProfileDispatch({
               type: 'SET_IS_SUBSCRIBED',
-              payload: subscriberDoc.exists
+              payload: subscriberDoc.exists,
             });
         }
       } else {
@@ -91,7 +90,7 @@ export const UserInfo: React.FC<UserInfoProps> = ({ userHandle }) => {
 
   const memoizedFetchUser = useCallback(fetchUser, [
     userState.userHandle,
-    isMounted
+    isMounted,
   ]);
 
   useEffect(() => {
@@ -99,28 +98,22 @@ export const UserInfo: React.FC<UserInfoProps> = ({ userHandle }) => {
   }, [memoizedFetchUser]);
 
   return (
-    <Wrapper>
-      <LoadingSpinner loading={shouldLoad ? 1 : 0} centerSpinner>
-        {hasError && (
-          <Center>
-            <Text size={2}>
-              Oops! Couldn't find the user you're looking for.
-            </Text>
-          </Center>
-        )}
-        {!hasError && (
-          <>
-            <UserInfoCard />
-            {userProfileState.userData.numPosts > 0 ? (
-              <SubHeading>Posts</SubHeading>
-            ) : (
-              <Text size={1.3}>This user hasn't posted anything yet.</Text>
-            )}
+    <LoadingSpinner loading={shouldLoad ? 1 : 0} centerSpinner>
+      {hasError && (
+        <Center>
+          <Text size={2}>Oops! Couldn't find the user you're looking for.</Text>
+        </Center>
+      )}
+      {!hasError && (
+        <Wrapper>
+          <UserInfoCard />
+          {userProfileState.userData.numPosts === 0 && (
+            <Text size={1.3}>This user hasn't posted anything yet.</Text>
+          )}
 
-            <UserPosts />
-          </>
-        )}
-      </LoadingSpinner>
-    </Wrapper>
+          <UserPosts />
+        </Wrapper>
+      )}
+    </LoadingSpinner>
   );
 };

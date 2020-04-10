@@ -17,13 +17,11 @@ import {
   FormFieldGrid,
   ErrorMessage,
   MetaTextContainer,
-  CheckboxFieldGrid
+  CheckboxFieldGrid,
 } from '../../shared/FormStyles';
 import { TextLoader } from '../../shared/TextLoader';
 import { CustomError } from '../../../utils/CustomError';
 import { required } from '../../../utils/formValidators';
-
-// TODO: Refactor LoginForm and RegisterForm into a single generic form component
 
 type Values = {
   email: string;
@@ -43,7 +41,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
   const initialValues: Values = reauthenticate
     ? {
         email: userState.email,
-        password: ''
+        password: '',
       }
     : { email: '', password: '' };
 
@@ -71,7 +69,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
       throw new CustomError(err.code, 'Authentication failed');
     }
   };
-
   const reauthenticateUser = async (values: Values) => {
     const credential = firebase.auth.EmailAuthProvider.credential(
       values.email,
@@ -82,7 +79,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
       const userCredentials = await firebase
         .auth()
         .signInWithEmailAndPassword(values.email, values.password);
-
       await userCredentials.user?.reauthenticateWithCredential(credential);
     } catch (err) {
       throw new CustomError(err.code, 'Reauthentication failed');
@@ -149,15 +145,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ reauthenticate }) => {
 
   // Sign out user just in case they're signed in
   useEffect(() => {
-    firebase.auth().signOut();
-  }, []);
+    if (!reauthenticate) {
+      firebase.auth().signOut();
+    }
+  }, [reauthenticate]);
 
   // these are in rem units
   const fieldLabelMargins = {
     left: 1,
     right: 0,
     bottom: 0,
-    top: 0
+    top: 0,
   };
 
   return (

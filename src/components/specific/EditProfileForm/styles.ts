@@ -13,16 +13,16 @@ type TextAreaProps = {
   hasError?: boolean;
 };
 export const TextArea = styled(StyledTextArea)<TextAreaProps>`
-  background-color: ${props => props.theme.colors.cardBackground};
+  background-color: ${(props) => props.theme.colors.cardBackground};
   padding: 1rem 1rem;
   border-radius: 5px;
   border: 2px solid
-    ${props =>
+    ${(props) =>
       props.hasError
         ? props.theme.colors.tertiary
         : props.theme.colors.secondary};
   box-shadow: 0px 3px 6px
-    ${props =>
+    ${(props) =>
       props.hasError
         ? props.theme.colors.tertiary
         : props.theme.colors.secondary}40;
@@ -31,12 +31,12 @@ export const TextArea = styled(StyledTextArea)<TextAreaProps>`
   :focus {
     outline: none;
     border: 3px solid
-      ${props =>
+      ${(props) =>
         props.hasError
           ? props.theme.colors.tertiary
           : props.theme.colors.secondary};
     box-shadow: 0px 6px 39px
-      ${props =>
+      ${(props) =>
         props.hasError
           ? props.theme.colors.tertiary
           : props.theme.colors.secondary}40;
@@ -45,7 +45,6 @@ export const TextArea = styled(StyledTextArea)<TextAreaProps>`
 
 export const ButtonContainer = styled.div`
   margin-top: 2.7rem;
+  margin-bottom: 1.3rem;
   display: grid;
-  grid-template-rows: auto;
-  row-gap: 2rem;
 `;

@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   justify-items: center;
   row-gap: 4rem;
+  margin-top: -3rem;
 `;
 
 export const ActionsAndFormWrapper = styled.section`

@@ -6,7 +6,7 @@ import { useUserState } from '../../../contexts/UserContext';
 import { useUserProfileState } from '../../../contexts/UserProfileContext';
 import {
   usePostsState,
-  usePostsDispatch
+  usePostsDispatch,
 } from '../../../contexts/PostsContext';
 import { useMounted } from '../../../hooks/useMounted';
 import { PostItem } from '../../shared/PostItem';
@@ -34,7 +34,7 @@ export const UserPosts: React.FC = () => {
         firebase.firestore.DocumentData
       >[]
     ) => {
-      const docDataPromises: Promise<any>[] = docs.map(async doc => {
+      const docDataPromises: Promise<any>[] = docs.map(async (doc) => {
         const commentsCollection = await db
           .doc(`users/${userData.userId}`)
           .collection('posts')
@@ -43,7 +43,7 @@ export const UserPosts: React.FC = () => {
           .orderBy('createdAt', 'desc')
           .get();
 
-        const commentsDataPromises = commentsCollection.docs.map(async d => {
+        const commentsDataPromises = commentsCollection.docs.map(async (d) => {
           const userDoc = await db
             .collection('users')
             .doc(d.data().userId)
@@ -53,7 +53,7 @@ export const UserPosts: React.FC = () => {
             ...d.data(),
             userHandle: userDoc.exists
               ? userDoc.data()?.userHandle
-              : '[deleted user]'
+              : '[deleted user]',
           };
         });
 
@@ -80,7 +80,7 @@ export const UserPosts: React.FC = () => {
             ? userDoc.data()?.profileImageURL
             : doc.data().userProfile,
           comments: commentsData,
-          isSeeded: seedDoc.exists
+          isSeeded: seedDoc.exists,
         };
       });
 
@@ -127,7 +127,7 @@ export const UserPosts: React.FC = () => {
     (node: HTMLDivElement) => {
       if (fetchingMorePosts || maxPostsFetched) return;
       if (observer.current) observer.current?.disconnect();
-      observer.current = new IntersectionObserver(async entries => {
+      observer.current = new IntersectionObserver(async (entries) => {
         if (entries[0].isIntersecting && !maxPostsFetched && lastVisiblePost) {
           try {
             isMounted.current && setFetchingMorePosts(true);
@@ -164,7 +164,7 @@ export const UserPosts: React.FC = () => {
       maxPostsFetched,
       mapToPosts,
       userData.userId,
-      isMounted
+      isMounted,
     ]
   );
 

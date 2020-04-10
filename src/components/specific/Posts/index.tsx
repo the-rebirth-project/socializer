@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { useUserState } from '../../../contexts/UserContext';
 import {
   usePostsState,
-  usePostsDispatch
+  usePostsDispatch,
 } from '../../../contexts/PostsContext';
 import { useMounted } from '../../../hooks/useMounted';
 import { Post } from '../../../types';
@@ -34,14 +34,14 @@ export const Posts: React.FC = () => {
         firebase.firestore.DocumentData
       >[]
     ) => {
-      const docDataPromises: Promise<any>[] = docs.map(async doc => {
+      const docDataPromises: Promise<any>[] = docs.map(async (doc) => {
         const commentsCollection = await db
           .doc(`users/${userState.userId}/feed/${doc.id}`)
           .collection('comments')
           .orderBy('createdAt', 'desc')
           .get();
 
-        const commentsDataPromises = commentsCollection.docs.map(async d => {
+        const commentsDataPromises = commentsCollection.docs.map(async (d) => {
           const userDoc = await db
             .collection('users')
             .doc(d.data().userId)
@@ -51,7 +51,7 @@ export const Posts: React.FC = () => {
             ...d.data(),
             userHandle: userDoc.exists
               ? userDoc.data()?.userHandle
-              : '[deleted user]'
+              : '[deleted user]',
           };
         });
 
@@ -75,7 +75,7 @@ export const Posts: React.FC = () => {
             ? userDoc.data()?.profileImageURL
             : doc.data().userProfile,
           comments: commentsData,
-          isSeeded: seedDoc.exists
+          isSeeded: seedDoc.exists,
         };
       });
       const docData: Post[] = await Promise.all(docDataPromises);
@@ -91,7 +91,7 @@ export const Posts: React.FC = () => {
       isMounted.current &&
         dispatch({ type: 'SET_FETCHING_POSTS', payload: true });
       try {
-        const querySnapshot = await db
+        const snap = await db
           .doc(`users/${userState.userId}`)
           .collection('feed')
           .orderBy('createdAt', 'desc')
@@ -99,9 +99,8 @@ export const Posts: React.FC = () => {
           .get();
 
         isMounted.current &&
-          setLastVisiblePost(querySnapshot.docs[querySnapshot.docs.length - 1]);
-
-        await mapToPosts(querySnapshot.docs);
+          setLastVisiblePost(snap.docs[snap.docs.length - 1]);
+        await mapToPosts(snap.docs);
       } catch (err) {
         // TODO: Handle error
         console.log(err);
@@ -114,12 +113,13 @@ export const Posts: React.FC = () => {
 
   const memoizedGetPosts = useCallback(getPosts, [
     userState.fetchingUser,
-    isMounted
+    isMounted,
   ]);
 
   useEffect(() => {
+    dispatch({ type: 'RESET_POSTS' });
     memoizedGetPosts();
-  }, [memoizedGetPosts, userState.fetchingUser]);
+  }, [memoizedGetPosts, dispatch]);
 
   // we want this value to persist (not change) on every render hence we use the useRef hook
   const observer = useRef<IntersectionObserver | undefined>();
@@ -127,34 +127,34 @@ export const Posts: React.FC = () => {
     (node: HTMLDivElement) => {
       if (fetchingMorePosts || maxPostsFetched) return;
       if (observer.current) observer.current?.disconnect();
-      observer.current = new IntersectionObserver(async entries => {
-        if (
-          entries[0].isIntersecting &&
-          !maxPostsFetched &&
-          lastVisiblePost &&
-          isMounted.current
-        ) {
-          // append more posts
-          setFetchingMorePosts(true);
-          const querySnapshot = await db
-            .doc(`users/${userState.userId}`)
-            .collection('feed')
-            .orderBy('createdAt', 'desc')
-            .startAfter(lastVisiblePost)
-            .limit(postsLimit)
-            .get();
+      observer.current = new IntersectionObserver(async (entries) => {
+        if (entries[0].isIntersecting && !maxPostsFetched && lastVisiblePost) {
+          // try appending more posts
+          try {
+            isMounted.current && setFetchingMorePosts(true);
+            const snap = await db
+              .doc(`users/${userState.userId}`)
+              .collection('feed')
+              .orderBy('createdAt', 'desc')
+              .startAfter(lastVisiblePost)
+              .limit(postsLimit)
+              .get();
+            console.log(snap.docs);
 
-          // if we get no docs, then stop querying further
-          if (querySnapshot.docs.length > 0) {
-            setLastVisiblePost(
-              querySnapshot.docs[querySnapshot.docs.length - 1]
-            );
-            await mapToPosts(querySnapshot.docs);
-          } else {
-            setMaxPostsFetched(true);
+            // if we get no docs, then stop querying further
+            if (snap.docs.length > 0) {
+              console.log(snap.docs);
+              isMounted.current &&
+                setLastVisiblePost(snap.docs[snap.docs.length - 1]);
+              await mapToPosts(snap.docs);
+            } else {
+              isMounted.current && setMaxPostsFetched(true);
+            }
+          } catch (err) {
+            console.log(err);
           }
 
-          setFetchingMorePosts(false);
+          isMounted.current && setFetchingMorePosts(false);
         }
       });
 
@@ -167,7 +167,7 @@ export const Posts: React.FC = () => {
       db,
       lastVisiblePost,
       mapToPosts,
-      userState.userId
+      userState.userId,
     ]
   );
 

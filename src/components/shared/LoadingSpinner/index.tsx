@@ -1,4 +1,5 @@
 import React from 'react';
+import { animated, useTransition } from 'react-spring';
 import { Spinner, Wrapper } from './styles';
 
 type LoadingSpinnerProps = {
@@ -17,8 +18,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   loading,
   centerSpinner,
   small,
-  children
+  children,
 }) => {
+  const transitions = useTransition(loading, (p) => p, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
   const SpinnerElement = <Spinner small={small}></Spinner>;
 
   return (
@@ -26,7 +32,14 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       {loading === 1 &&
         (centerSpinner ? <Wrapper>{SpinnerElement}</Wrapper> : SpinnerElement)}
 
-      {!loading && <>{children}</>}
+      {transitions.map(
+        ({ item, key, props }) =>
+          !item && (
+            <animated.div key={key} style={props}>
+              {children}
+            </animated.div>
+          )
+      )}
     </>
   );
 };

@@ -30,7 +30,7 @@ export const Notifications = () => {
         firebase.firestore.DocumentData
       >[]
     ) => {
-      const notifDataPromises: Promise<Notification>[] = docs.map(async n => {
+      const notifDataPromises: Promise<Notification>[] = docs.map(async (n) => {
         const userDoc = await db.doc(`users/${n.data().userId}`).get();
 
         return {
@@ -40,7 +40,7 @@ export const Notifications = () => {
             : '[deleted user]',
           userProfile: userDoc.data()?.profileImageURL,
           message: n.data().message,
-          createdAt: n.data().createdAt
+          createdAt: n.data().createdAt,
         };
       });
 
@@ -53,23 +53,27 @@ export const Notifications = () => {
 
   // fetch initial notifications
   const getNotifications = useCallback(async () => {
-    try {
-      isMounted.current && setFetchingNotifs(true);
-      const snap = await db
-        .doc(`users/${userState.userId}`)
-        .collection('notifications')
-        .orderBy('createdAt', 'desc')
-        .limit(15)
-        .get();
+    isMounted.current && setFetchingNotifs(true);
+    if (userState.userId) {
+      try {
+        const snap = await db
+          .collection('users')
+          .doc(userState.userId)
+          .collection('notifications')
+          .orderBy('createdAt', 'desc')
+          .limit(15)
+          .get();
 
-      if (snap.docs.length > 0) setLastVisible(snap.docs[snap.docs.length - 1]);
+        if (snap.docs.length > 0)
+          setLastVisible(snap.docs[snap.docs.length - 1]);
 
-      await mapToNotifs(snap.docs);
-    } catch (err) {
-      alert.error(`Couldn't fetch notifications`);
+        await mapToNotifs(snap.docs);
+      } catch (err) {
+        alert.error(`Couldn't fetch notifications`);
+      }
+
+      isMounted.current && setFetchingNotifs(false);
     }
-
-    isMounted.current && setFetchingNotifs(false);
   }, [alert, db, userState.userId, isMounted, mapToNotifs]);
 
   useEffect(() => {
@@ -82,7 +86,7 @@ export const Notifications = () => {
       if (fetchingMoreNotifs || maxNotifsFetched) return;
       if (observer.current) observer.current.disconnect();
 
-      observer.current = new IntersectionObserver(async entries => {
+      observer.current = new IntersectionObserver(async (entries) => {
         if (entries[0].isIntersecting && !maxNotifsFetched && lastVisible) {
           try {
             isMounted.current && setFetchingMoreNotifs(true);
@@ -112,7 +116,7 @@ export const Notifications = () => {
       lastVisible,
       maxNotifsFetched,
       mapToNotifs,
-      userState.userId
+      userState.userId,
     ]
   );
 
@@ -126,7 +130,7 @@ export const Notifications = () => {
             if (i === notifications.length - 1) {
               return (
                 <div ref={lastNotifRef} key={n.id}>
-                  <NotificationItem notification={n} lastNotif />
+                  <NotificationItem notification={n} />
                 </div>
               );
             } else {

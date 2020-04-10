@@ -10,7 +10,7 @@ type RouteParams = {
 };
 
 export const UserView: React.FC<RouteComponentProps<RouteParams>> = ({
-  userHandle
+  userHandle,
 }) => {
   return (
     <Page>

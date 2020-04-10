@@ -3,7 +3,7 @@ import { device } from '../../utils/responsive';
 
 export const GlobalStyles = createGlobalStyle`
   body {
-    background-color: ${props => props.theme.colors.background};
+    background-color: ${(props) => props.theme.colors.background};
     line-height: 1.35;
 
     p {
@@ -27,7 +27,6 @@ export const GridContainer = styled.div`
   grid-template-columns: 90%;
   justify-content: center;
 
-  /* make it fixed for devices larger than mobile */
   @media ${device.mobileL} {
     grid-template-columns: 34rem;
   }

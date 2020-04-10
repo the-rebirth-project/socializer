@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { useAlert } from 'react-alert';
+import { UsersListItem } from '../UsersListItem';
 import { LoadingSpinner } from '../../shared/LoadingSpinner';
 import { User } from '../../../types/User';
-import { Wrapper } from './styles';
+import { Wrapper, LastUserListItemWrapper } from './styles';
 
 type UsersListProps = {
   initialUsers: User[];
@@ -29,11 +30,11 @@ export const UsersList: React.FC<UsersListProps> = ({ initialUsers }) => {
         firebase.firestore.DocumentData
       >[]
     ) => {
-      const newUsers: User[] = docs.map(d => {
+      const newUsers: User[] = docs.map((d) => {
         return {
           userId: d.id,
           userHandle: d.data()?.userHandle,
-          profileImageURL: d.data()?.profileImageURL
+          profileImageURL: d.data()?.profileImageURL,
         };
       });
 
@@ -43,44 +44,63 @@ export const UsersList: React.FC<UsersListProps> = ({ initialUsers }) => {
   );
 
   const observer = useRef<IntersectionObserver | undefined>(undefined);
-  const lastUserRef = useCallback(async () => {
-    if (fetchingMoreUsers || maxUsersFetched) return;
-    if (observer.current) observer.current?.disconnect();
+  const lastUserRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (fetchingMoreUsers || maxUsersFetched) return;
+      // disconnect if already connected
+      if (observer.current) observer.current?.disconnect();
 
-    observer.current = new IntersectionObserver(async entries => {
-      if (entries[0].isIntersecting && !lastVisibleUserId) {
-        try {
-          setFetchingMoreUsers(true);
-          const snap = await db
-            .collection('users')
-            .orderBy('createdAt', 'desc')
-            .startAfter(lastVisibleUserId)
-            .limit(15)
-            .get();
+      observer.current = new IntersectionObserver(async (entries) => {
+        // if the last element is in the viewport
+        if (entries[0].isIntersecting && !lastVisibleUserId) {
+          try {
+            setFetchingMoreUsers(true);
+            const snap = await db
+              .collection('users')
+              .orderBy('createdAt', 'desc')
+              .startAfter(lastVisibleUserId)
+              .limit(15)
+              .get();
 
-          if (snap.docs.length > 0) {
-            setLastVisibleUserId(snap.docs[snap.docs.length - 1].id);
-            mapToUsers(snap.docs);
-          } else {
-            setMaxUsersFetched(true);
+            if (snap.docs.length > 0) {
+              setLastVisibleUserId(snap.docs[snap.docs.length - 1].id);
+              mapToUsers(snap.docs);
+            } else {
+              setMaxUsersFetched(true);
+            }
+          } catch (err) {
+            alert.error(`Couldn't fetch more users`);
           }
-        } catch (err) {
-          alert.error(`Couldn't fetch more users`);
+
+          setFetchingMoreUsers(false);
         }
+      });
 
-        setFetchingMoreUsers(false);
-      }
-    });
-  }, [
-    db,
-    alert,
-    fetchingMoreUsers,
-    lastVisibleUserId,
-    mapToUsers,
-    maxUsersFetched
-  ]);
+      // if we have a valid node, observe it
+      if (node) observer.current.observe(node);
+    },
+    [
+      db,
+      alert,
+      fetchingMoreUsers,
+      lastVisibleUserId,
+      mapToUsers,
+      maxUsersFetched,
+    ]
+  );
 
-  // map over initialUsers
-  // make a UserListItem component
-  return <Wrapper></Wrapper>;
+  return (
+    <Wrapper>
+      {users.map((user, i) => {
+        return i === users.length - 1 ? (
+          <LastUserListItemWrapper ref={lastUserRef}>
+            <UsersListItem key={user.userId} user={user} />
+          </LastUserListItemWrapper>
+        ) : (
+          <UsersListItem key={user.userId} user={user} />
+        );
+      })}
+      <LoadingSpinner loading={fetchingMoreUsers ? 1 : 0} small />
+    </Wrapper>
+  );
 };

@@ -9,13 +9,12 @@ export const LoginView: React.FC<RouteComponentProps> = ({ path }) => {
   return (
     <Page>
       <Wrapper>
-        {path === 'login' && (
+        {path === 'login' ? (
           <>
             <SubHeading>Sign In</SubHeading>
             <LoginForm />
           </>
-        )}
-        {path === 'reauthenticate' && (
+        ) : (
           <>
             <SubHeading>Reauthenticate</SubHeading>
             <LoginForm reauthenticate />
