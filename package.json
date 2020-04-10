@@ -19,6 +19,7 @@
     "react-firebase-file-uploader": "^2.4.3",
     "react-image": "^2.4.0",
     "react-scripts": "3.3.0",
+    "react-spring": "^8.0.27",
     "react-textarea-autosize": "^7.1.2",
     "styled-components": "^5.0.0",
     "typescript": "^3.7.5",
@@ -55,7 +56,6 @@
     "@types/react-dom": "^16.9.5",
     "@types/react-textarea-autosize": "^4.3.5",
     "@types/styled-components": "^4.4.2",
-    "@types/uuid": "^3.4.7",
-    "@types/react-alert": "^5.2.0"
+    "@types/uuid": "^3.4.7"
   }
 }
