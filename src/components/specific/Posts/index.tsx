@@ -139,11 +139,9 @@ export const Posts: React.FC = () => {
               .startAfter(lastVisiblePost)
               .limit(postsLimit)
               .get();
-            console.log(snap.docs);
 
             // if we get no docs, then stop querying further
             if (snap.docs.length > 0) {
-              console.log(snap.docs);
               isMounted.current &&
                 setLastVisiblePost(snap.docs[snap.docs.length - 1]);
               await mapToPosts(snap.docs);
