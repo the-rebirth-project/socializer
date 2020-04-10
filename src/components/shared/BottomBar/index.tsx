@@ -6,14 +6,16 @@ import {
   faSearch,
   faBell,
 } from '@fortawesome/free-solid-svg-icons';
+import { useShowNav } from '../../../hooks/useShowNav';
 import { NavLink } from '../NavLink';
 import { NavIcon } from '../NavIcon';
 import { Wrapper } from './styles';
 
 export const BottomBar: React.FC = () => {
+  const show = useShowNav();
   const { userHandle } = useUserState();
 
-  return (
+  return show ? (
     <Wrapper>
       <NavLink to='/home'>
         <NavIcon icon={faHome} />
@@ -28,5 +30,5 @@ export const BottomBar: React.FC = () => {
         <NavIcon icon={faUser} />
       </NavLink>
     </Wrapper>
-  );
+  ) : null;
 };

@@ -8,7 +8,7 @@ export const Wrapper = styled.nav`
     display: flex;
     align-items: center;
     height: 100%;
-    width: 15%;
+    width: 20%;
     justify-content: space-between;
   }
 `;

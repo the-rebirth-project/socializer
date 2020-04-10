@@ -7,13 +7,15 @@ import {
   faSearch,
   faBell,
 } from '@fortawesome/free-solid-svg-icons';
+import { useShowNav } from '../../../hooks/useShowNav';
 import { Wrapper } from './styles';
 import { NavIcon } from '../NavIcon';
 
 export const TopNav = () => {
+  const show = useShowNav();
   const { userHandle } = useUserState();
 
-  return (
+  return show ? (
     <Wrapper>
       <NavLink to='/home'>
         <NavIcon icon={faHome} />
@@ -31,5 +33,5 @@ export const TopNav = () => {
         <NavIcon icon={faUser} />
       </NavLink>
     </Wrapper>
-  );
+  ) : null;
 };
