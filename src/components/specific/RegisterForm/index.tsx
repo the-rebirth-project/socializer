@@ -51,8 +51,11 @@ export const RegisterForm: React.FC = () => {
       const defaultPhotoUrl = `https://firebasestorage.googleapis.com/v0/b/${fbConfig.storageBucket}/o/no-img.png?alt=media`;
 
       // user already exists with the same userHandle
-      const userDoc = await db.doc(`users/${formValues.username}`).get();
-      if (userDoc.exists)
+      const snap = await db
+        .collection('users')
+        .where('userHandle', '==', formValues.username)
+        .get();
+      if (!snap.empty)
         throw new CustomError(
           'auth/username-already-taken',
           'Authentication Failed'
@@ -112,7 +115,7 @@ export const RegisterForm: React.FC = () => {
       setVerifEmailSent(true);
       alert.info('Sent verification email. Please check your inbox.');
       // immediately sign out user
-      firebase.auth().signOut();
+      await firebase.auth().signOut();
     } catch (err) {
       throw new CustomError(err.code, 'Authentication failed');
     }
@@ -126,6 +129,7 @@ export const RegisterForm: React.FC = () => {
       await signUpUser(values);
       setSigningUp(false);
     } catch (err) {
+      alert.removeAll();
       alert.error('Failed to register account');
       /**
        * - POSSIBLE ERRORS

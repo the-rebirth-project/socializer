@@ -23,10 +23,15 @@ type RoutesProps = {
 export const Routes: React.FC<RoutesProps> = ({ location }) => {
   const dispatch = useUserDispatch();
   const pathname = location.pathname;
+  const isForbiddenPath =
+    pathname !== '/register' &&
+    pathname !== '/account/edit' &&
+    pathname !== '/reauthenticate' &&
+    pathname !== '/forgot-password';
 
   // we only have to try getting the user if they're in any other location except register
   useEffect(() => {
-    if (pathname !== '/register') {
+    if (isForbiddenPath) {
       // SET USER
       firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
@@ -58,12 +63,11 @@ export const Routes: React.FC<RoutesProps> = ({ location }) => {
           }
         } else {
           // no need of doing this in the edit section. deletion logic handles the navigation
-          if (pathname !== '/account/edit' && pathname !== '/reauthenticate')
-            navigate('/login');
+          navigate('/login');
         }
       });
     }
-  }, [dispatch, pathname]);
+  }, [dispatch, isForbiddenPath]);
 
   const transitions = useTransition(location, (location) => location.pathname, {
     from: { opacity: 0 },

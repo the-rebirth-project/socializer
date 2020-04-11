@@ -12,14 +12,13 @@ import { device } from './utils/responsive';
 
 const FBConfig = require('./config/index');
 firebase.initializeApp(FBConfig);
-console.log(FBConfig);
 
 const alertOptions = {
   timeout: 5000,
   position: positions.BOTTOM_CENTER,
   transition: transitions.FADE,
   containerStyle: {
-    fontSize: '3rem',
+    fontSize: '1.3rem',
   },
   offset:
     window.innerWidth <= parseInt(device.tablet.replace('px', ''))
