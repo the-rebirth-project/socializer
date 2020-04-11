@@ -27,7 +27,7 @@ export const GridContainer = styled.div`
   grid-template-columns: 90%;
   justify-content: center;
 
-  @media ${device.mobileL} {
+  @media ${device.tablet} {
     grid-template-columns: 34rem;
   }
 `;

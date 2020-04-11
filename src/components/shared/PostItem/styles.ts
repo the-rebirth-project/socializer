@@ -34,7 +34,7 @@ export const ProfilePictureContainer = styled.div`
 `;
 
 export const PostBody = styled.main`
-  background-color: ${props => props.theme.colors.cardBackground};
+  background-color: ${(props) => props.theme.colors.cardBackground};
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
   position: relative;
@@ -48,7 +48,7 @@ export const PostBody = styled.main`
 export const ParagraphText = styled.p`
   font-size: 1.35rem;
   font-weight: 400;
-  color: ${props => props.theme.colors.textColor};
+  color: ${(props) => props.theme.colors.textColor};
   line-height: 1.35;
   white-space: pre-wrap;
   max-height: 30rem;
@@ -70,17 +70,17 @@ export const SvgWrapper = styled.div<SvgWrapperProps>`
   padding: 0rem 1rem;
   cursor: pointer;
   svg * {
-    fill: ${props => props.theme.colors.textColor};
+    fill: ${(props) => props.theme.colors.textColor};
     transition: all 0.2s ease-in-out;
 
-    ${props =>
+    ${(props) =>
       props.likedPost
         ? css`
             fill: url(#lgrad);
             filter: url(#dropShadowGraphic);
           `
         : css`
-            fill: ${props => props.theme.colors.textColor};
+            fill: ${(props) => props.theme.colors.textColor};
             filter: url(#dropShadowWhite);
           `}
   }

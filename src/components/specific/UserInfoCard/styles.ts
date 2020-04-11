@@ -5,7 +5,7 @@ import { SecondaryButton } from '../../shared/SecondaryButton';
 export const Wrapper = styled(Card)`
   border-top-right-radius: 0;
   border-top-left-radius: 0;
-  width: 80%;
+  width: 90%;
 `;
 
 export const UserInfoContainer = styled.main`

@@ -6,7 +6,7 @@ export const Wrapper = styled.div`
   grid-template-rows: repeat(2, min-content);
   justify-items: center;
   row-gap: 2rem;
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
   margin-top: -${navbarHeight}rem;
 `;
