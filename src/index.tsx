@@ -8,7 +8,7 @@ import { UserContextProvider } from './contexts/UserContext';
 import * as serviceWorker from './serviceWorker';
 import { mainTheme } from './themes/mainTheme';
 import { App } from './App';
-import { device } from './utils/responsive';
+import { size } from './utils/responsive';
 
 const FBConfig = require('./config/index');
 firebase.initializeApp(FBConfig);
@@ -21,7 +21,7 @@ const alertOptions = {
     fontSize: '1.3rem',
   },
   offset:
-    window.innerWidth <= parseInt(device.tablet.replace('px', ''))
+    window.innerWidth <= parseInt(size.tablet.replace('px', ''))
       ? '6rem'
       : '15px',
 };
