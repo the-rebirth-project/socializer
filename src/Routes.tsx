@@ -29,44 +29,41 @@ export const Routes: React.FC<RoutesProps> = ({ location }) => {
     pathname !== '/reauthenticate' &&
     pathname !== '/forgot-password';
 
-  // we only have to try getting the user if they're in any other location except register
   useEffect(() => {
-    if (isForbiddenPath) {
-      // SET USER
-      firebase.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-          try {
-            dispatch({ type: 'SET_FETCHING_USER', payload: true });
-            const snap = await firebase
-              .firestore()
-              .collection('users')
-              .where('userId', '==', user.uid)
-              .limit(1)
-              .get();
-            const userDocData = snap.docs[0].data();
+    // SET USER
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          dispatch({ type: 'SET_FETCHING_USER', payload: true });
+          const snap = await firebase
+            .firestore()
+            .collection('users')
+            .where('userId', '==', user.uid)
+            .limit(1)
+            .get();
+          const userDocData = snap.docs[0].data();
 
-            dispatch({
-              type: 'SET_USER',
-              payload: {
-                email: userDocData.email,
-                userId: user.uid,
-                userHandle: userDocData.userHandle,
-                userProfile: userDocData.profileImageURL,
-                bio: userDocData.bio,
-                location: userDocData.location,
-              },
-            });
-            dispatch({ type: 'SET_FETCHING_USER', payload: false });
-          } catch (err) {
-            // TODO: Handle error
-            console.log(err);
-          }
-        } else {
-          // no need of doing this in the edit section. deletion logic handles the navigation
-          navigate('/login');
+          dispatch({
+            type: 'SET_USER',
+            payload: {
+              email: userDocData.email,
+              userId: user.uid,
+              userHandle: userDocData.userHandle,
+              userProfile: userDocData.profileImageURL,
+              bio: userDocData.bio,
+              location: userDocData.location,
+            },
+          });
+          dispatch({ type: 'SET_FETCHING_USER', payload: false });
+        } catch (err) {
+          // TODO: Handle error
+          console.log(err);
         }
-      });
-    }
+      } else {
+        // no need of doing this in the edit section. deletion logic handles the navigation
+        isForbiddenPath && navigate('/login');
+      }
+    });
   }, [dispatch, isForbiddenPath]);
 
   const transitions = useTransition(location, (location) => location.pathname, {
