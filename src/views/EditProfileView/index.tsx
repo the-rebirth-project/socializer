@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import firebase from 'firebase/app';
-import 'firebase/firestore';
 import 'firebase/auth';
 import { useAlert } from 'react-alert';
 import { navigate, RouteComponentProps } from '@reach/router';
@@ -14,8 +13,7 @@ import { Page } from '../../components/shared/Page';
 import { Wrapper, ActionsAndFormWrapper } from './styles';
 
 export const EditProfileView: React.FC<RouteComponentProps> = () => {
-  const db = firebase.firestore();
-  const { fetchingUser, userId } = useUserState();
+  const { fetchingUser } = useUserState();
   const [deletingAccount, setDeletingAccount] = useState(false);
   const alert = useAlert();
 
@@ -25,9 +23,8 @@ export const EditProfileView: React.FC<RouteComponentProps> = () => {
       if (user) {
         try {
           await user?.delete();
-          const userIdToDelete = userId;
-          await db.collection('users').doc(userIdToDelete).delete();
           alert.success('Successfully deleted account');
+          navigate('/login');
         } catch (err) {
           if (err.code === 'auth/requires-recent-login') {
             alert.info('Please reauthenticate your account to proceed');
