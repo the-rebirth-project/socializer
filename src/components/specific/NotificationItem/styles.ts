@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { device } from '../../../utils/responsive';
 
 export const Wrapper = styled.section`
   display: grid;
@@ -6,11 +7,14 @@ export const Wrapper = styled.section`
   column-gap: 1rem;
   align-items: center;
   min-height: 4rem;
+  width: 100vw;
   padding: 0rem 2rem;
-  width: 100%;
   position: relative;
-  justify-content: center;
-  justify-items: center;
+
+  @media ${device.tablet} {
+    width: 100%;
+    padding: 0rem;
+  }
 `;
 
 export const ContentWrapper = styled.div`
