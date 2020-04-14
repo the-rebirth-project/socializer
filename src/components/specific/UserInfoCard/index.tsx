@@ -141,6 +141,7 @@ export const UserInfoCard: React.FC = () => {
                 onClick={onSubscribeClick}
                 small
                 disabled={isSubscribing}
+                serious={isSubscribed}
               >
                 {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
               </SecondaryButton>
