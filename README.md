@@ -1,44 +1,33 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Socializer
 
-## Available Scripts
+This app was built with [React](https://reactjs.org) as the frontend and [Firebase](https://firebase.google.com) for authentication, file storage (storing profile pictures) and for storing data with Cloud Firestore.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+Basic functionality like you would expect from most social media apps is included. You can follow other users to be subscribed to any future posts they create, you can seed posts (equivalent to liking them), you can comment on posts and you can reply to comments. The comment reply feature is structured to only be two levels deep. The first level is the parent comment and the second level contains the replies. It's pretty much similar to how YouTube structures it.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+*You currently cannot delete any posts, comments or replies that you've made.* I should've probably included this functionality as it isn't hard to implement but I've moved onto other projects for now. I was a bit burnt out by the time I had all of the critical features implemented. I might potentially revisit this someday.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+You can however both modify and delete your account. Modification includes stuff like resetting your password and editing profile details. Deletion means your entire account is deleted (and thus undiscoverable). Your posts, comments and replies that you've made will then be marked as "\[deleted\]".
 
-### `npm test`
+### Authentication
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Authentication is entirely handled by Firebase. The strategy used is Email + Password. Additionally, users have to verify their email after registration in order to log in. This is — again — managed by Firebase.
 
-### `npm run build`
+### Notifications
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+There's currently support for in-app notifications but not for push notifications in the PWA.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## React Context vs Redux
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+I decided to opt for purely the context hooks for managing state. It actually works quite nicely and scales appropriately. I do miss the dev tooling that Redux provides though. Overall, I think the context hooks are more than enough for most projects.
 
-### `npm run eject`
+## Styled Components
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+I'm a huge fan of styled components. I think it works really well with the component architecture that most web apps are built on these days. You're still writing css in the end but with the flexibility of a programming language. Just like with react components, you can pass down props to styled components for constructing different variants out of one component. You don't have to fiddle with a bunch of different classes and such. Most of the shared components in this project are exported as a pure styled component since they don't contain any logic and are presentational.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Tests
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+I haven't written any tests for the project. The main reason being I didn't really know how to when I wrote this initially. I've seen the benefits of writing tests and will most probably write them for my future projects. For now, writing tests for this codebase would be a somewhat big undertaking for me as there are many components to test for.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+*This project is intended as a portfolio piece and has been made open source for educational purposes.*
